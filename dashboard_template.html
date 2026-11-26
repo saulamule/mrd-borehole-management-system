@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MRD | MRD Borehole Management System</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+<style>
+:root{--navy:#12304a;--blue:#176b87;--teal:#188977;--bg:#f3f6f9;--ink:#1e293b;--muted:#64748b;--line:#dce4eb}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Arial,Helvetica,sans-serif;color:var(--ink)}
+header{background:linear-gradient(115deg,#102d46,#176b87);color:white;padding:24px clamp(16px,4vw,48px)}
+.brand{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;opacity:.8;font-weight:bold}
+h1{font-size:clamp(22px,3vw,32px);margin:8px 0}.sub{opacity:.86;font-size:14px}
+main{max-width:1600px;margin:auto;padding:22px clamp(12px,3vw,36px) 40px}
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.card,.panel{background:white;border:1px solid var(--line);border-radius:12px;box-shadow:0 2px 8px #19324a0a}
+.kpi{padding:16px}.kpi .label{font-size:12px;color:var(--muted);font-weight:bold;text-transform:uppercase}.kpi .value{font-size:29px;font-weight:700;color:var(--navy);margin-top:8px}.kpi .hint{font-size:11px;color:var(--muted);margin-top:4px}
+.filters{display:flex;flex-wrap:wrap;gap:10px;padding:14px;margin-bottom:16px;align-items:end}
+.field{display:flex;flex-direction:column;gap:5px;min-width:150px;flex:1}.field label{font-size:11px;font-weight:bold;color:var(--muted);text-transform:uppercase}
+input,select{height:38px;border:1px solid var(--line);border-radius:7px;padding:0 10px;background:white;color:var(--ink);min-width:0}
+button{height:38px;padding:0 15px;border:0;border-radius:7px;background:var(--navy);color:white;font-weight:bold;cursor:pointer}
+.layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(280px,.85fr);gap:16px}
+.panel{padding:16px;margin-bottom:16px}.panel h2{font-size:16px;margin:0 0 12px;color:var(--navy)}
+#map{height:560px;border-radius:9px;border:1px solid var(--line)}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:12px}.chartbox{height:230px;position:relative}
+.legend{font-size:12px;color:var(--muted);line-height:1.6;margin-top:8px}
+.table-wrap{overflow:auto;max-height:470px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap}th{position:sticky;top:0;background:#edf3f7;color:#29465e;text-align:left;z-index:1}
+td,th{padding:10px;border-bottom:1px solid #e8edf2}tbody tr:hover{background:#f4f8fb}
+.pill{display:inline-block;padding:3px 7px;border-radius:20px;background:#edf3f7;font-size:11px}
+.notice{border-left:4px solid #d69a2d;background:#fff9eb;padding:12px 14px;border-radius:7px;font-size:12px;line-height:1.55;margin:14px 0}
+.small{font-size:11px;color:var(--muted)}footer{text-align:center;color:var(--muted);font-size:11px;padding:22px}
+@media(max-width:1000px){.kpis{grid-template-columns:repeat(3,1fr)}.layout{grid-template-columns:1fr}}
+@media(max-width:600px){.kpis{grid-template-columns:repeat(2,1fr)}.charts{grid-template-columns:1fr}#map{height:440px}.kpi .value{font-size:24px}}
+</style>
+</head>
+<body>
+<header><div class="brand">FIJI · MINERAL RESOURCES DEPARTMENT</div>
+<h1>MRD Borehole Management System</h1>
+<div class="sub">Operational borehole register · GIS distribution · implementation status</div><div id="buildStamp" style="font-size:11px;opacity:.75;margin-top:7px"></div></header>
+<main>
+<section class="kpis">
+ <div class="card kpi"><div class="label">Register records</div><div class="value" id="kTotal">—</div><div class="hint">All spreadsheet entries</div></div>
+ <div class="card kpi"><div class="label">Mapped locations</div><div class="value" id="kMapped">—</div><div class="hint">Valid Fiji coordinates</div></div>
+ <div class="card kpi"><div class="label">Pump tests completed</div><div class="value" id="kCompleted">—</div><div class="hint">Completed / completed (case-insensitive)</div></div>
+ <div class="card kpi"><div class="label">Pump tests pending</div><div class="value" id="kPending">—</div><div class="hint">Recorded as pending</div></div>
+ <div class="card kpi"><div class="label">Coordinate review</div><div class="value" id="kReview">—</div><div class="hint">Missing or invalid coordinates</div></div>
+</section>
+<section class="panel filters">
+ <div class="field"><label for="search">Search register</label><input id="search" placeholder="Borehole, village or keyword"></div>
+ <div class="field"><label for="division">Division</label><select id="division"><option value="">All divisions</option></select></div>
+ <div class="field"><label for="province">Province</label><select id="province"><option value="">All provinces</option></select></div>
+ <div class="field"><label for="pump">Pump-test status</label><select id="pump"><option value="">All statuses</option></select></div>
+ <div class="field"><label for="retic">Reticulation status</label><select id="retic"><option value="">All statuses</option></select></div>
+ <button id="reset">Reset filters</button>
+</section>
+<div class="layout">
+ <div>
+  <section class="panel"><h2>Geographic distribution of boreholes</h2><div id="map"></div>
+   <div class="legend">Marker colours: Central · blue | Western · green | Northern · orange | Eastern · purple. Select a marker for its register details. Clusters represent nearby boreholes.</div>
+  </section>
+  <section class="panel"><h2>Borehole register</h2>
+   <div class="small" id="tableCount" style="margin-bottom:9px"></div>
+   <div class="table-wrap"><table><thead><tr><th>Borehole</th><th>Location</th><th>Division</th><th>Province</th><th>Depth (m)</th><th>Discharge (L/s)</th><th>Pump test</th><th>Reticulation</th></tr></thead><tbody id="rows"></tbody></table></div>
+  </section>
+ </div>
+ <div>
+  <section class="panel"><h2>Records by division</h2><div class="chartbox"><canvas id="divisionChart"></canvas></div></section>
+  <section class="panel"><h2>Pump-test status</h2><div class="chartbox"><canvas id="pumpChart"></canvas></div></section>
+  <section class="panel"><h2>Reticulation status</h2><div class="chartbox"><canvas id="reticChart"></canvas></div></section>
+  <section class="panel"><h2>Register observations</h2><div id="observations" class="legend"></div></section>
+ </div>
+</div>
+<div class="notice"><b>Administrator update:</b> The official editable register is <code>data/boreholes.csv</code> in the GitHub repository. Update the CSV and commit it to the <code>main</code> branch; GitHub Actions validates the register and republishes this dashboard. This website is read-only and contains no administrator password or GitHub token.<br><br><b>Data quality and use:</b> Coordinates are plotted only when they fall within Fiji's broad geographic bounds. The script removes harmless internal spaces and degree symbols from numeric coordinate cells, but does not swap or guess coordinates. Records excluded from the map should be checked against the original field/GIS records. Confirm MRD approval before publishing this infrastructure register publicly.</div>
+</main>
+<footer>Mineral Resources Department · Generated from the supplied workbook · Verify source records before operational or field use</footer>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+const DATA = __DATA_JSON__;
+document.getElementById("buildStamp").textContent = "Dashboard build: __BUILT_AT__ · Source: data/boreholes.csv";
+const colours={Central:"#2675b9",Western:"#22966f",Northern:"#d88a20",Eastern:"#8657ad",Unspecified:"#718096"};
+const $=id=>document.getElementById(id);
+const fmt=v=>v===null||v===undefined||v===""?"Not recorded":v;
+const unique=key=>[...new Set(DATA.map(d=>d[key]).filter(x=>x&&x!=="Unspecified"&&x!=="Not recorded"))].sort();
+function fillSelect(id,values){values.forEach(v=>{let o=document.createElement("option");o.value=v;o.textContent=v;$(id).appendChild(o)})}
+fillSelect("division",unique("division"));fillSelect("province",unique("province"));
+fillSelect("pump",unique("pump_test"));fillSelect("retic",unique("reticulation"));
+
+const map=L.map("map",{scrollWheelZoom:true}).setView([-17.8,178.2],6);
+
+// Multiple selectable basemaps. If one provider is blocked or unavailable,
+// users can switch providers from the layer control.
+const baseLayers = {
+ "OpenStreetMap": L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+   attribution:'&copy; OpenStreetMap contributors', maxZoom:19, subdomains:"abc"
+ }),
+ "CARTO Light": L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+   attribution:'&copy; OpenStreetMap &copy; CARTO', subdomains:"abcd", maxZoom:19
+ }),
+ "Esri World Street Map": L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
+   attribution:'Tiles &copy; Esri', maxZoom:19
+ }),
+ "Esri Satellite": L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+   attribution:'Tiles &copy; Esri', maxZoom:19
+ })
+};
+baseLayers["OpenStreetMap"].addTo(map);
+const tileStatus = document.createElement("div");
+tileStatus.style.cssText = "position:absolute;z-index:500;bottom:12px;left:12px;background:#fff;padding:6px 9px;border:1px solid #cbd5e1;border-radius:6px;font:11px Arial;box-shadow:0 1px 4px #64748b55";
+tileStatus.textContent = "Basemap: OpenStreetMap";
+$("map").appendChild(tileStatus);
+Object.entries(baseLayers).forEach(([name, layer]) => {
+ layer.on("tileerror", () => { tileStatus.textContent = "Basemap tiles unavailable — try another layer or check network access"; });
+ layer.on("tileload", () => { tileStatus.textContent = "Basemap: " + name; });
+});
+L.control.layers(baseLayers, null, {collapsed:true, position:"topright"}).addTo(map);
+const clusters=L.markerClusterGroup({showCoverageOnHover:false,spiderfyOnMaxZoom:true});map.addLayer(clusters);
+const markers=new Map();
+function popup(d){
+ const fields=[["Borehole number",d.borehole],["Location",d.location],["Division",d.division],["Province",d.province],["Year / FY drilled",d.year],["Depth (m)",d.depth],["Preliminary discharge (L/s)",d.discharge],["Status",d.status],["Pump-test status",d.pump_test],["Reticulation status",d.reticulation],["Community water status",d.community_water],["Options for support",d.support],["Latitude",d.latitude],["Longitude",d.longitude]];
+ return `<div style="min-width:230px"><b style="font-size:14px">${esc(fmt(d.borehole))}</b><table>${fields.map(([k,v])=>`<tr><td style="font-weight:bold;padding:3px 6px">${esc(k)}</td><td style="padding:3px 6px">${esc(fmt(v))}</td></tr>`).join("")}</table></div>`;
+}
+function esc(x){return String(x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+DATA.filter(d=>d.mapped).forEach(d=>{
+ const marker=L.circleMarker([d.latitude,d.longitude],{radius:7,color:colours[d.division]||colours.Unspecified,fillColor:colours[d.division]||colours.Unspecified,fillOpacity:.85,weight:1.5});
+ marker.bindPopup(popup(d));marker.bindTooltip(`${fmt(d.borehole)} · ${d.location}`);
+ markers.set(d,marker);
+});
+function current(){
+ const q=$("search").value.toLowerCase().trim(),div=$("division").value,prov=$("province").value,pump=$("pump").value,ret=$("retic").value;
+ return DATA.filter(d=>(!q||[d.borehole,d.location,d.division,d.province,d.year,d.status,d.pump_test,d.reticulation].join(" ").toLowerCase().includes(q))&&(!div||d.division===div)&&(!prov||d.province===prov)&&(!pump||d.pump_test===pump)&&(!ret||d.reticulation===ret));
+}
+let charts={};
+function makeChart(id,type,labels,values){
+ if(charts[id])charts[id].destroy();
+ charts[id]=new Chart($(id),{type,data:{labels,datasets:[{data:values,backgroundColor:labels.map((x,i)=>["#2675b9","#22966f","#d88a20","#8657ad","#8b9baa","#c45b5b"][i%6]),borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:type==="doughnut",position:"bottom"}},scales:type==="bar"?{y:{beginAtZero:true,ticks:{precision:0}}}:{}}});
+}
+function counts(rows,key){let m={};rows.forEach(d=>{let k=d[key]||"Not recorded";m[k]=(m[k]||0)+1});return m}
+function render(){
+ const rows=current(),mapped=rows.filter(d=>d.mapped);
+ $("kTotal").textContent=rows.length;$("kMapped").textContent=mapped.length;
+ $("kCompleted").textContent=rows.filter(d=>d.pump_test.toLowerCase()==="completed").length;
+ $("kPending").textContent=rows.filter(d=>d.pump_test.toLowerCase()==="pending").length;
+ $("kReview").textContent=rows.length-mapped.length;
+ $("tableCount").textContent=`Showing ${rows.length} of ${DATA.length} register records · ${mapped.length} with mappable coordinates`;
+ $("rows").innerHTML=rows.map(d=>`<tr><td>${esc(fmt(d.borehole))}</td><td>${esc(d.location)}</td><td>${esc(d.division)}</td><td>${esc(d.province)}</td><td>${esc(fmt(d.depth))}</td><td>${esc(fmt(d.discharge))}</td><td><span class="pill">${esc(d.pump_test)}</span></td><td><span class="pill">${esc(d.reticulation)}</span></td></tr>`).join("");
+ clusters.clearLayers();mapped.forEach(d=>clusters.addLayer(markers.get(d)));
+ if(mapped.length){let b=L.latLngBounds(mapped.map(d=>[d.latitude,d.longitude]));map.fitBounds(b.pad(.12),{maxZoom:8})}
+ const dc=counts(rows,"division");makeChart("divisionChart","bar",Object.keys(dc),Object.values(dc));
+ const pc=counts(rows,"pump_test");makeChart("pumpChart","doughnut",Object.keys(pc),Object.values(pc));
+ const rc=counts(rows,"reticulation");makeChart("reticChart","doughnut",Object.keys(rc),Object.values(rc));
+ const unmapped=rows.filter(d=>!d.mapped);
+ const prov=counts(rows,"province");
+ $("observations").innerHTML=`<b>Filtered dataset:</b> ${rows.length} records<br><b>Largest provincial groups:</b> ${Object.entries(prov).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([k,v])=>`${esc(k)} (${v})`).join(", ")||"—"}<br><b>Coordinate review required:</b> ${unmapped.length} record(s)<br><b>Unmapped records:</b> ${unmapped.map(d=>esc(d.borehole||d.location)).join("; ")||"None"}<br><br><span class="small">Counts reflect the selected filters. Blank source fields are shown as “Not recorded”.</span>`;
+}
+["search","division","province","pump","retic"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",render));
+$("reset").addEventListener("click",()=>{["search","division","province","pump","retic"].forEach(id=>$(id).value="");render()});
+render();
+</script>
+</body></html>

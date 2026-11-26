@@ -1,0 +1,78 @@
+#!/usr/bin/env python3
+"""Build the MRD Borehole Management System dashboard from data/boreholes.csv."""
+from pathlib import Path
+from datetime import datetime, timezone
+import csv, json, re, sys
+
+ROOT = Path(__file__).resolve().parent
+CSV_FILE = ROOT / "data" / "boreholes.csv"
+TEMPLATE = ROOT / "dashboard_template.html"
+OUTPUT = ROOT / "docs" / "index.html"
+
+def text(v):
+    return (v or "").strip()
+
+def num(v):
+    s = text(v).replace(",", "").replace("°", "")
+    if not s:
+        return None
+    try:
+        return float(re.sub(r"\s+", "", s))
+    except ValueError:
+        return None
+
+def in_fiji(lat, lon):
+    return lat is not None and lon is not None and -25 <= lat <= -10 and (
+        175 <= lon <= 180 or -180 <= lon <= -175
+    )
+
+def main():
+    if not CSV_FILE.exists():
+        raise SystemExit(f"Missing source register: {CSV_FILE}")
+    with CSV_FILE.open("r", encoding="utf-8-sig", newline="") as f:
+        reader = csv.DictReader(f)
+        if not reader.fieldnames:
+            raise SystemExit("The CSV file is empty or has no header row.")
+        required = ["Borehole number", "Location", "Latitude", "Longitude",
+                    "Division", "Province"]
+        missing = [h for h in required if h not in reader.fieldnames]
+        if missing:
+            raise SystemExit("Required CSV columns missing: " + ", ".join(missing))
+        raw = list(reader)
+
+    records = []
+    for row in raw:
+        lat, lon = num(row.get("Latitude")), num(row.get("Longitude"))
+        records.append({
+            "record_no": text(row.get("No.")),
+            "year": text(row.get("Year / FY drilled")),
+            "borehole": text(row.get("Borehole number")),
+            "location": text(row.get("Location")),
+            "latitude": lat, "longitude": lon, "mapped": in_fiji(lat, lon),
+            "division": text(row.get("Division")) or "Unspecified",
+            "province": text(row.get("Province")) or "Unspecified",
+            "depth": num(row.get("Depth (m)")),
+            "discharge": num(row.get("Preliminary discharge (L/s)")),
+            "status": text(row.get("Status")) or "Not recorded",
+            "pump_test": text(row.get("Pump-test status")) or "Not recorded",
+            "reticulation": text(row.get("Reticulation status")) or "Not recorded",
+            "community_water": text(row.get("Community Water Status")) or "Not recorded",
+            "support": text(row.get("Options for support")) or "Not recorded",
+        })
+
+    template = TEMPLATE.read_text(encoding="utf-8")
+    payload = json.dumps(records, ensure_ascii=False).replace("</", "<\\/")
+    built = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    html = (template.replace("__DATA_JSON__", payload)
+                    .replace("__TOTAL__", str(len(records)))
+                    .replace("__MAPPED__", str(sum(r["mapped"] for r in records)))
+                    .replace("__BUILT_AT__", built))
+    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+    OUTPUT.write_text(html, encoding="utf-8")
+    print(f"Dashboard generated: {OUTPUT}")
+    print(f"Register records: {len(records)}")
+    print(f"Mapped records: {sum(r['mapped'] for r in records)}")
+    print(f"Coordinate review: {sum(not r['mapped'] for r in records)}")
+
+if __name__ == "__main__":
+    main()
