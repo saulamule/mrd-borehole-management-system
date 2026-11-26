@@ -65,6 +65,21 @@ jobs:
       - name: Generate dashboard
         run: python generate_dashboard.py
 
+      - name: Check generated dashboard JavaScript
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          html = Path("docs/index.html").read_text(encoding="utf-8")
+          scripts = re.findall(r"<script>(.*?)</script>", html, flags=re.DOTALL)
+          if not scripts:
+              raise SystemExit("No inline dashboard JavaScript found.")
+          Path("/tmp/mrd-dashboard.js").write_text(scripts[-1], encoding="utf-8")
+          if "__RESOURCES_DATA_JSON__" in html or "__DATA_JSON__" in html:
+              raise SystemExit("A dashboard data placeholder was not replaced.")
+          PY
+          node --check /tmp/mrd-dashboard.js
+
       - name: Publish approval status
         run: |
           if [ "$APPROVED" = "true" ]; then
