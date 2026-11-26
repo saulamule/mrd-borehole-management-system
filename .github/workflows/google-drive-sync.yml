@@ -1,4 +1,5 @@
 name: Sync MRD Dashboard from Google Drive
+# MRD-approved public release is controlled by repository variable MRD_DASHBOARD_PUBLIC_RELEASE_APPROVED.
 
 on:
   schedule:
