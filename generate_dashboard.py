@@ -58,6 +58,13 @@ def main():
             "reticulation": text(row.get("Reticulation status")) or "Not recorded",
             "community_water": text(row.get("Community Water Status")) or "Not recorded",
             "support": text(row.get("Options for support")) or "Not recorded",
+            "tikina": text(row.get("Tikina")) or "Not recorded",
+            "tikina_water_status": text(row.get("NDRMO Tikina water status (22 Nov)")) or "Not recorded",
+            "tikina_critical_share": num(row.get("% of people in Critical or worse communities (tikina)")),
+            "tikina_critical_communities": text(row.get("Communities Critical or worse (tikina)")) or "Not recorded",
+            "tikina_note": text(row.get("Tikina note")) or "Not recorded",
+            "additional_source_field_1": text(row.get("Additional source field 1")) or "Not recorded",
+            "additional_source_field_2": text(row.get("Additional source field 2")) or "Not recorded",
         })
 
     template = TEMPLATE.read_text(encoding="utf-8")
