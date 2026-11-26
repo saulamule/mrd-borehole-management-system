@@ -11,6 +11,7 @@ on:
       - 'scripts/sync_google_sources.py'
       - 'generate_dashboard.py'
       - 'dashboard_template.html'
+      - 'gis_layers/**'
       - '.github/workflows/google-drive-sync.yml'
 
 permissions:
