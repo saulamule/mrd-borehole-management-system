@@ -269,9 +269,9 @@ def sync_purchasing(item: dict, token: str) -> tuple[int, int, float]:
 
     workbook = download_xlsx(item, token)
     try:
-        if "All Materials" not in workbook.sheetnames:
-            raise RuntimeError("Purchasing workbook has no 'All Materials' worksheet.")
-        sheet = workbook["All Materials"]
+        sheet = next((ws for ws in workbook.worksheets if ws.title.strip() == "All Materials"), None)
+        if sheet is None:
+            raise RuntimeError("Purchasing workbook has no 'All Materials' worksheet. Available worksheets: " + ", ".join(workbook.sheetnames))
         rows = list(sheet.iter_rows(values_only=True))
         header_indexes = [i for i, row in enumerate(rows) if looks_like_material_header(row)]
         if len(header_indexes) != 7:
