@@ -119,10 +119,10 @@ td,th{padding:10px;border-bottom:1px solid #e8edf2}tbody tr:hover{background:#f4
     <div class="card kpi"><div class="label">Work sections</div><div class="value" id="pKpiSections">—</div><div class="hint">As grouped in the workbook</div></div>
     <div class="card kpi"><div class="label">Suppliers listed</div><div class="value" id="pKpiSuppliers">—</div><div class="hint">Distinct supplier names</div></div>
     <div class="card kpi"><div class="label">Supplier follow-up</div><div class="value" id="pKpiSupplierGaps">—</div><div class="hint">Material lines without a supplier</div></div>
-    <div class="card kpi"><div class="label">Source grand total</div><div class="value" id="pKpiTotal">—</div><div class="hint">Amount as stated in the workbook</div></div>
+    <div class="card kpi"><div class="label">Source grand total (FJD)</div><div class="value" id="pKpiTotal">—</div><div class="hint">Amount in FJD</div></div>
   </section>
   <div class="purchase-notice">
-    <b>Procurement data note:</b> The workbook does not state a currency. Figures are therefore shown as source amounts without adding a currency label.
+    <b>Currency:</b> All material prices, unit costs, subtotals and totals in this register are in Fiji dollars (FJD).
     Quantities for one site and four sites are displayed exactly as entered; blank quantities, unit costs, suppliers or amounts have not been estimated.
   </div>
   <div class="purchase-warning" id="purchaseCostWarning"></div>
@@ -141,7 +141,7 @@ td,th{padding:10px;border-bottom:1px solid #e8edf2}tbody tr:hover{background:#f4
     </div>
     <div class="table-wrap">
       <table class="purchase-table">
-        <thead><tr><th>Work section</th><th>Material description</th><th>Qty<br>1 site</th><th>Qty<br>4 sites</th><th>Unit cost</th><th>Supplier</th><th>Amount<br>1 site</th><th>Follow-up</th></tr></thead>
+        <thead><tr><th>Work section</th><th>Material description</th><th>Qty<br>1 site</th><th>Qty<br>4 sites</th><th>Unit cost<br>(FJD)</th><th>Supplier</th><th>Amount<br>1 site (FJD)</th><th>Follow-up</th></tr></thead>
         <tbody id="purchaseRows"></tbody>
       </table>
     </div>
@@ -150,7 +150,7 @@ td,th{padding:10px;border-bottom:1px solid #e8edf2}tbody tr:hover{background:#f4
     <h2>Section subtotals from the material list</h2>
     <div class="table-wrap">
       <table class="purchase-table">
-        <thead><tr><th>Work section</th><th>Number of material lines</th><th>Subtotal (source workbook)</th></tr></thead>
+        <thead><tr><th>Work section</th><th>Number of material lines</th><th>Subtotal (FJD)</th></tr></thead>
         <tbody id="purchaseSectionTotals"></tbody>
       </table>
     </div>
@@ -159,7 +159,7 @@ td,th{padding:10px;border-bottom:1px solid #e8edf2}tbody tr:hover{background:#f4
     <h2>Workbook summary</h2>
     <div class="table-wrap">
       <table class="purchase-table">
-        <thead><tr><th>Summary heading</th><th>Amount (source workbook)</th></tr></thead>
+        <thead><tr><th>Summary heading</th><th>Amount (FJD)</th></tr></thead>
         <tbody id="purchaseReportedSummary"></tbody>
       </table>
     </div>
@@ -273,8 +273,9 @@ const sourceGrandTotal = (PURCHASING.reported_summary.find(x => x.name === "Gran
 const detailSubtotalTotal = PURCHASING.sections.reduce((sum, x) => sum + (Number(x.subtotal) || 0), 0);
 const numberText = value => value === null || value === undefined || value === "" ? "Not stated" :
   (typeof value === "number" ? value.toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:2}) : String(value));
+const currencyLabel = PURCHASING.currency || "FJD";
 const amountText = value => value === null || value === undefined || value === "" ? "Not stated" :
-  Number(value).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+  currencyLabel + " " + Number(value).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
 const purchaseEsc = value => String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const purchaseSupplier = item => item.supplier || "Not listed in source";
 const purchaseFollowup = item => {
