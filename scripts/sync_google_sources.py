@@ -160,7 +160,7 @@ def sync_boreholes(item: dict, token: str) -> int:
         rows = list(sheet.iter_rows(values_only=True))
         if not rows:
             raise RuntimeError("The borehole source worksheet is empty.")
-        headers = [re.sub(r"\\s+", " ", cell_text(value)).strip() for value in rows[0]]
+        headers = [re.sub(r"\s+", " ", cell_text(value)).strip() for value in rows[0]]
         while headers and not headers[-1]:
             headers.pop()
         required = {
