@@ -52,6 +52,8 @@ td,th{padding:10px;border-bottom:1px solid #e8edf2}tbody tr:hover{background:#f4
  <div class="field"><label for="search">Search register</label><input id="search" placeholder="Borehole, village or keyword"></div>
  <div class="field"><label for="division">Division</label><select id="division"><option value="">All divisions</option></select></div>
  <div class="field"><label for="province">Province</label><select id="province"><option value="">All provinces</option></select></div>
+ <div class="field"><label for="tikina">Tikina</label><select id="tikina"><option value="">All tikina</option></select></div>
+ <div class="field"><label for="tikinaStatus">Tikina water status</label><select id="tikinaStatus"><option value="">All Tikina water statuses</option></select></div>
  <div class="field"><label for="pump">Pump-test status</label><select id="pump"><option value="">All statuses</option></select></div>
  <div class="field"><label for="retic">Reticulation status</label><select id="retic"><option value="">All statuses</option></select></div>
  <button id="reset">Reset filters</button>
@@ -63,13 +65,14 @@ td,th{padding:10px;border-bottom:1px solid #e8edf2}tbody tr:hover{background:#f4
   </section>
   <section class="panel"><h2>Borehole register</h2>
    <div class="small" id="tableCount" style="margin-bottom:9px"></div>
-   <div class="table-wrap"><table><thead><tr><th>Borehole</th><th>Location</th><th>Division</th><th>Province</th><th>Depth (m)</th><th>Discharge (L/s)</th><th>Pump test</th><th>Reticulation</th></tr></thead><tbody id="rows"></tbody></table></div>
+   <div class="table-wrap"><table><thead><tr><th>Borehole</th><th>Location</th><th>Division</th><th>Province</th><th>Tikina</th><th>Tikina water status</th><th>Critical/worse share</th><th>Depth (m)</th><th>Discharge (L/s)</th><th>Pump test</th><th>Reticulation</th></tr></thead><tbody id="rows"></tbody></table></div>
   </section>
  </div>
  <div>
   <section class="panel"><h2>Records by division</h2><div class="chartbox"><canvas id="divisionChart"></canvas></div></section>
   <section class="panel"><h2>Pump-test status</h2><div class="chartbox"><canvas id="pumpChart"></canvas></div></section>
   <section class="panel"><h2>Reticulation status</h2><div class="chartbox"><canvas id="reticChart"></canvas></div></section>
+  <section class="panel"><h2>Tikina water status</h2><div class="chartbox"><canvas id="tikinaStatusChart"></canvas></div></section>
   <section class="panel"><h2>Register observations</h2><div id="observations" class="legend"></div></section>
  </div>
 </div>
@@ -88,6 +91,7 @@ const fmt=v=>v===null||v===undefined||v===""?"Not recorded":v;
 const unique=key=>[...new Set(DATA.map(d=>d[key]).filter(x=>x&&x!=="Unspecified"&&x!=="Not recorded"))].sort();
 function fillSelect(id,values){values.forEach(v=>{let o=document.createElement("option");o.value=v;o.textContent=v;$(id).appendChild(o)})}
 fillSelect("division",unique("division"));fillSelect("province",unique("province"));
+fillSelect("tikina",unique("tikina"));fillSelect("tikinaStatus",unique("tikina_water_status"));
 fillSelect("pump",unique("pump_test"));fillSelect("retic",unique("reticulation"));
 
 const map=L.map("map",{scrollWheelZoom:true}).setView([-17.8,178.2],6);
@@ -121,7 +125,7 @@ L.control.layers(baseLayers, null, {collapsed:true, position:"topright"}).addTo(
 const clusters=L.markerClusterGroup({showCoverageOnHover:false,spiderfyOnMaxZoom:true});map.addLayer(clusters);
 const markers=new Map();
 function popup(d){
- const fields=[["Borehole number",d.borehole],["Location",d.location],["Division",d.division],["Province",d.province],["Year / FY drilled",d.year],["Depth (m)",d.depth],["Preliminary discharge (L/s)",d.discharge],["Status",d.status],["Pump-test status",d.pump_test],["Reticulation status",d.reticulation],["Community water status",d.community_water],["Options for support",d.support],["Latitude",d.latitude],["Longitude",d.longitude]];
+ const fields=[["Borehole number",d.borehole],["Location",d.location],["Division",d.division],["Province",d.province],["Year / FY drilled",d.year],["Depth (m)",d.depth],["Preliminary discharge (L/s)",d.discharge],["Status",d.status],["Pump-test status",d.pump_test],["Reticulation status",d.reticulation],["Community water status",d.community_water],["Options for support",d.support],["Tikina",d.tikina],["NDRMO Tikina water status (22 Nov)",d.tikina_water_status],["People in critical or worse communities",d.tikina_critical_share===null?null:(d.tikina_critical_share*100).toFixed(2)+"%"],["Communities critical or worse",d.tikina_critical_communities],["Tikina note",d.tikina_note],["Latitude",d.latitude],["Longitude",d.longitude]];
  return `<div style="min-width:230px"><b style="font-size:14px">${esc(fmt(d.borehole))}</b><table>${fields.map(([k,v])=>`<tr><td style="font-weight:bold;padding:3px 6px">${esc(k)}</td><td style="padding:3px 6px">${esc(fmt(v))}</td></tr>`).join("")}</table></div>`;
 }
 function esc(x){return String(x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
@@ -131,8 +135,8 @@ DATA.filter(d=>d.mapped).forEach(d=>{
  markers.set(d,marker);
 });
 function current(){
- const q=$("search").value.toLowerCase().trim(),div=$("division").value,prov=$("province").value,pump=$("pump").value,ret=$("retic").value;
- return DATA.filter(d=>(!q||[d.borehole,d.location,d.division,d.province,d.year,d.status,d.pump_test,d.reticulation].join(" ").toLowerCase().includes(q))&&(!div||d.division===div)&&(!prov||d.province===prov)&&(!pump||d.pump_test===pump)&&(!ret||d.reticulation===ret));
+ const q=$("search").value.toLowerCase().trim(),div=$("division").value,prov=$("province").value,tik=$("tikina").value,tikStatus=$("tikinaStatus").value,pump=$("pump").value,ret=$("retic").value;
+ return DATA.filter(d=>(!q||[d.borehole,d.location,d.division,d.province,d.year,d.status,d.pump_test,d.reticulation,d.tikina,d.tikina_water_status,d.tikina_note].join(" ").toLowerCase().includes(q))&&(!div||d.division===div)&&(!prov||d.province===prov)&&(!tik||d.tikina===tik)&&(!tikStatus||d.tikina_water_status===tikStatus)&&(!pump||d.pump_test===pump)&&(!ret||d.reticulation===ret));
 }
 let charts={};
 function makeChart(id,type,labels,values){
@@ -147,18 +151,21 @@ function render(){
  $("kPending").textContent=rows.filter(d=>d.pump_test.toLowerCase()==="pending").length;
  $("kReview").textContent=rows.length-mapped.length;
  $("tableCount").textContent=`Showing ${rows.length} of ${DATA.length} register records · ${mapped.length} with mappable coordinates`;
- $("rows").innerHTML=rows.map(d=>`<tr><td>${esc(fmt(d.borehole))}</td><td>${esc(d.location)}</td><td>${esc(d.division)}</td><td>${esc(d.province)}</td><td>${esc(fmt(d.depth))}</td><td>${esc(fmt(d.discharge))}</td><td><span class="pill">${esc(d.pump_test)}</span></td><td><span class="pill">${esc(d.reticulation)}</span></td></tr>`).join("");
+ $("rows").innerHTML=rows.map(d=>`<tr><td>${esc(fmt(d.borehole))}</td><td>${esc(d.location)}</td><td>${esc(d.division)}</td><td>${esc(d.province)}</td><td>${esc(fmt(d.tikina))}</td><td>${esc(fmt(d.tikina_water_status))}</td><td>${d.tikina_critical_share===null?"Not recorded":(d.tikina_critical_share*100).toFixed(1)+"%"}</td><td>${esc(fmt(d.depth))}</td><td>${esc(fmt(d.discharge))}</td><td><span class="pill">${esc(d.pump_test)}</span></td><td><span class="pill">${esc(d.reticulation)}</span></td></tr>`).join("");
  clusters.clearLayers();mapped.forEach(d=>clusters.addLayer(markers.get(d)));
  if(mapped.length){let b=L.latLngBounds(mapped.map(d=>[d.latitude,d.longitude]));map.fitBounds(b.pad(.12),{maxZoom:8})}
  const dc=counts(rows,"division");makeChart("divisionChart","bar",Object.keys(dc),Object.values(dc));
  const pc=counts(rows,"pump_test");makeChart("pumpChart","doughnut",Object.keys(pc),Object.values(pc));
  const rc=counts(rows,"reticulation");makeChart("reticChart","doughnut",Object.keys(rc),Object.values(rc));
+ const tc=counts(rows,"tikina_water_status");makeChart("tikinaStatusChart","doughnut",Object.keys(tc),Object.values(tc));
  const unmapped=rows.filter(d=>!d.mapped);
  const prov=counts(rows,"province");
- $("observations").innerHTML=`<b>Filtered dataset:</b> ${rows.length} records<br><b>Largest provincial groups:</b> ${Object.entries(prov).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([k,v])=>`${esc(k)} (${v})`).join(", ")||"—"}<br><b>Coordinate review required:</b> ${unmapped.length} record(s)<br><b>Unmapped records:</b> ${unmapped.map(d=>esc(d.borehole||d.location)).join("; ")||"None"}<br><br><span class="small">Counts reflect the selected filters. Blank source fields are shown as “Not recorded”.</span>`;
+ const tikinaAssigned=rows.filter(d=>d.tikina&&d.tikina!=="Not recorded").length;
+ const criticalTikina=rows.filter(d=>d.tikina_water_status.includes("Critical or worse")).length;
+ $("observations").innerHTML=`<b>Filtered dataset:</b> ${rows.length} records<br><b>Records with Tikina:</b> ${tikinaAssigned}<br><b>Tikina status marked Critical or worse:</b> ${criticalTikina}<br><b>Largest provincial groups:</b> ${Object.entries(prov).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([k,v])=>`${esc(k)} (${v})`).join(", ")||"—"}<br><b>Coordinate review required:</b> ${unmapped.length} record(s)<br><b>Unmapped records:</b> ${unmapped.map(d=>esc(d.borehole||d.location)).join("; ")||"None"}<br><br><span class="small">Counts reflect the selected filters. Blank source fields are shown as “Not recorded”.</span>`;
 }
-["search","division","province","pump","retic"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",render));
-$("reset").addEventListener("click",()=>{["search","division","province","pump","retic"].forEach(id=>$(id).value="");render()});
+["search","division","province","tikina","tikinaStatus","pump","retic"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",render));
+$("reset").addEventListener("click",()=>{["search","division","province","tikina","tikinaStatus","pump","retic"].forEach(id=>$(id).value="");render()});
 render();
 </script>
 </body></html>
