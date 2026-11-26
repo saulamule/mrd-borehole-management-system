@@ -1,0 +1,30 @@
+name: Validate and Build MRD Borehole Dashboard
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data/boreholes.csv'
+      - 'dashboard_template.html'
+      - 'generate_dashboard.py'
+      - 'validate_data.py'
+      - '.github/workflows/deploy-dashboard.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate master register
+        run: python validate_data.py
+      - name: Generate dashboard
+        run: python generate_dashboard.py
