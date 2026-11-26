@@ -231,6 +231,74 @@ Object.entries(baseLayers).forEach(([name, layer]) => {
  layer.on("tileload", () => { tileStatus.textContent = "Basemap: " + name; });
 });
 L.control.layers(baseLayers, null, {collapsed:true, position:"topright"}).addTo(map);
+
+// NDRMO water-status GIS overlays. These layers are independently selectable.
+const waterStatusLayers = {};
+const waterStatusColours = {
+  "Source failed / no water":"#5C0A1F",
+  "Critical":"#B8322A",
+  "Approaching critical":"#C9A200",
+  "Normal":"#2C7A4B",
+  "No data":"#8A94A6",
+  "60% or more":"#B8322A",
+  "30-60%":"#B8740F",
+  "Under 30%":"#C9A200",
+  "None":"#2C7A4B"
+};
+function waterPopup(props, title) {
+  const rows = Object.entries(props || {}).filter(([k,v]) => v !== null && v !== undefined && v !== "");
+  return '<div style="max-height:300px;overflow:auto;min-width:220px"><b>' + esc(title) + '</b><table>' +
+    rows.map(([k,v]) => '<tr><td style="font-weight:bold;padding:3px 6px">' + esc(k.replace(/_/g," ")) +
+    '</td><td style="padding:3px 6px">' + esc(v) + '</td></tr>').join("") + '</table></div>';
+}
+function addWaterStatusLayers() {
+  fetch("gis_layers/tikina_water_status.geojson").then(r => {
+    if (!r.ok) throw new Error("Tikina layer HTTP " + r.status);
+    return r.json();
+  }).then(data => {
+    const layer = L.geoJSON(data, {
+      style: feature => {
+        const p = feature.properties || {};
+        const noReport = String(p.reported || "").toLowerCase() === "no report";
+        const colour = waterStatusColours[p.share_cls] || waterStatusColours[p.worst] || "#8A94A6";
+        return {color:noReport ? "#9AA3AD" : colour, weight:noReport ? 1 : 1.2,
+          opacity:.9, fillColor:noReport ? "#EEEEEE" : colour,
+          fillOpacity:noReport ? .18 : .42, dashArray:noReport ? "4 4" : null};
+      },
+      onEachFeature: (feature, lyr) => {
+        const p = feature.properties || {};
+        lyr.bindPopup(waterPopup(p, p.tikina || "Tikina water status"));
+        if (p.tikina) lyr.bindTooltip(p.tikina);
+      }
+    });
+    waterStatusLayers["Tikina water status (NDRMO)"] = layer;
+    layer.addTo(map);
+    waterOverlayControl.addOverlay(layer, "Tikina water status (NDRMO)");
+  }).catch(err => console.warn("Tikina water-status layer unavailable:", err));
+
+  fetch("gis_layers/community_water_status.geojson").then(r => {
+    if (!r.ok) throw new Error("Community layer HTTP " + r.status);
+    return r.json();
+  }).then(data => {
+    const layer = L.geoJSON(data, {
+      pointToLayer: (feature, latlng) => {
+        const p = feature.properties || {};
+        const colour = waterStatusColours[p.status] || "#8A94A6";
+        return L.circleMarker(latlng, {radius:5, color:colour, fillColor:colour,
+          fillOpacity:.88, weight:1.1});
+      },
+      onEachFeature: (feature, lyr) => {
+        const p = feature.properties || {};
+        lyr.bindPopup(waterPopup(p, p.community || "Community water status"));
+        if (p.community) lyr.bindTooltip(p.community);
+      }
+    });
+    waterStatusLayers["Community water status (NDRMO)"] = layer;
+    waterOverlayControl.addOverlay(layer, "Community water status (NDRMO)");
+  }).catch(err => console.warn("Community water-status layer unavailable:", err));
+}
+const waterOverlayControl = L.control.layers(null, {}, {collapsed:true, position:"topright"}).addTo(map);
+addWaterStatusLayers();
 const clusters=L.markerClusterGroup({showCoverageOnHover:false,spiderfyOnMaxZoom:true});map.addLayer(clusters);
 const markers=new Map();
 function popup(d){
