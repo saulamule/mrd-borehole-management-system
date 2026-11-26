@@ -322,8 +322,8 @@ function renderPurchasing(){
     return "<tr><td>"+purchaseEsc(item.section)+"</td><td>"+purchaseEsc(item.material)+"</td><td>"+
       purchaseEsc(numberText(item.qty1))+"</td><td>"+purchaseEsc(numberText(item.qty4))+"</td><td>"+
       purchaseEsc(amountText(item.unitCost))+"</td><td>"+purchaseEsc(purchaseSupplier(item))+"</td><td>"+
-      purchaseEsc(amountText(item.amount1))+"</td><td><span class=\\"status-pill "+f[1]+"\\">"+f[0]+"</span></td></tr>";
-  }).join("")||"<tr><td colspan=\\"8\\">No matching materials found.</td></tr>";
+      purchaseEsc(amountText(item.amount1))+"</td><td><span class=\"status-pill "+f[1]+"\">"+f[0]+"</span></td></tr>";
+  }).join("")||"<tr><td colspan=\"8\">No matching materials found.</td></tr>";
   $("purchaseSectionTotals").innerHTML=PURCHASING.sections.map(section=>
     "<tr><td>"+purchaseEsc(section.name)+"</td><td>"+section.items.length+"</td><td>"+amountText(section.subtotal)+"</td></tr>"
   ).join("")+"<tr><td><b>Sum of detail section subtotals</b></td><td>"+purchaseItems.length+"</td><td><b>"+amountText(detailSubtotalTotal)+"</b></td></tr>";
