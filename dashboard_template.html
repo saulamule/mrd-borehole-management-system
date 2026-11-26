@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MRD | MRD Borehole Management System</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
 <style>
 :root{--navy:#12304a;--blue:#176b87;--teal:#188977;--bg:#f3f6f9;--ink:#1e293b;--muted:#64748b;--line:#dce4eb}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Arial,Helvetica,sans-serif;color:var(--ink)}
@@ -76,8 +76,8 @@ td,th{padding:10px;border-bottom:1px solid #e8edf2}tbody tr:hover{background:#f4
 <div class="notice"><b>Administrator update:</b> The official editable register is <code>data/boreholes.csv</code> in the GitHub repository. Update the CSV and commit it to the <code>main</code> branch; GitHub Actions validates the register and republishes this dashboard. This website is read-only and contains no administrator password or GitHub token.<br><br><b>Data quality and use:</b> Coordinates are plotted only when they fall within Fiji's broad geographic bounds. The script removes harmless internal spaces and degree symbols from numeric coordinate cells, but does not swap or guess coordinates. Records excluded from the map should be checked against the original field/GIS records. Confirm MRD approval before publishing this infrastructure register publicly.</div>
 </main>
 <footer>Mineral Resources Department · Generated from the supplied workbook · Verify source records before operational or field use</footer>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
 const DATA = __DATA_JSON__;
@@ -108,10 +108,10 @@ const baseLayers = {
    attribution:'Tiles &copy; Esri', maxZoom:19
  })
 };
-baseLayers["OpenStreetMap"].addTo(map);
+baseLayers["Esri World Street Map"].addTo(map);
 const tileStatus = document.createElement("div");
 tileStatus.style.cssText = "position:absolute;z-index:500;bottom:12px;left:12px;background:#fff;padding:6px 9px;border:1px solid #cbd5e1;border-radius:6px;font:11px Arial;box-shadow:0 1px 4px #64748b55";
-tileStatus.textContent = "Basemap: OpenStreetMap";
+tileStatus.textContent = "Basemap: Esri World Street Map";
 $("map").appendChild(tileStatus);
 Object.entries(baseLayers).forEach(([name, layer]) => {
  layer.on("tileerror", () => { tileStatus.textContent = "Basemap tiles unavailable — try another layer or check network access"; });
