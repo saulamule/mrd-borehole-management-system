@@ -1,181 +1,154 @@
 #!/usr/bin/env python3
-"""Read-only inventory of files and Google Sheets in the configured Drive folder.
-
-For native Google Sheets, reads only spreadsheet metadata, worksheet names,
-and row-1 column headings. Does not fetch data rows or modify Drive files.
-"""
+"""Read-only inspection of selected MRD Drive sources."""
 from __future__ import annotations
-
-import json
-import os
-import sys
+import json, os, sys
+from io import BytesIO
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, quote
 from urllib.request import Request, urlopen
+from openpyxl import load_workbook
 
 DRIVE_API = "https://www.googleapis.com/drive/v3"
 SHEETS_API = "https://sheets.googleapis.com/v4"
 SHEET_MIME = "application/vnd.google-apps.spreadsheet"
-FOLDER_MIME = "application/vnd.google-apps.folder"
+TARGETS = {
+    "Copy of Draft ONE STAND PIPE MATERIAL LIST.xlsx",
+    "Copy of Unreticulated_Boreholes_Updated261126 - tikina status.xlsx",
+}
+HEADER_TERMS = (
+    "borehole", "location", "latitude", "longitude", "division", "province",
+    "material", "supplier", "unit cost", "quantity", "qty", "amount", "total",
+    "mrd", "waf", "pump", "depth", "discharge", "status", "year", "item",
+    "description", "section", "cost", "team", "transport", "reticulation",
+)
 
-
-def require_env(name: str) -> str:
+def env(name):
     value = os.environ.get(name, "").strip()
     if not value:
-        raise RuntimeError(f"Required GitHub Actions variable is missing: {name}")
+        raise RuntimeError("Missing required environment variable: " + name)
     return value
 
-
-def google_get(url: str, token: str) -> dict:
-    request = Request(
-        url,
-        headers={"Authorization": f"Bearer {token}", "Accept": "application/json"},
-        method="GET",
-    )
+def get(url, token, binary=False):
+    request = Request(url, headers={"Authorization": "Bearer " + token, "Accept": "*/*" if binary else "application/json"})
     try:
-        with urlopen(request, timeout=30) as response:
-            return json.loads(response.read().decode("utf-8"))
+        with urlopen(request, timeout=60) as response:
+            payload = response.read()
+            return payload if binary else json.loads(payload.decode("utf-8"))
     except HTTPError as exc:
         details = exc.read().decode("utf-8", errors="replace")
-        raise RuntimeError(
-            f"Google API request failed (HTTP {exc.code}). Response: {details[:1200]}"
-        ) from exc
+        raise RuntimeError("Google API HTTP " + str(exc.code) + ": " + details[:1000]) from exc
     except URLError as exc:
-        raise RuntimeError(f"Could not reach Google API: {exc.reason}") from exc
+        raise RuntimeError("Google API connection failed: " + str(exc.reason)) from exc
 
-
-def list_folder_items(folder_id: str, token: str) -> list[dict]:
-    query = f"'{folder_id}' in parents and trashed = false"
-    items: list[dict] = []
-    page_token = None
+def list_items(folder_id, token):
+    query = "'" + folder_id + "' in parents and trashed = false"
+    items, page_token = [], None
     while True:
         params = {
-            "q": query,
-            "pageSize": 100,
-            "orderBy": "name",
-            "fields": "nextPageToken,incompleteSearch,files(id,name,mimeType,modifiedTime,webViewLink)",
-            "supportsAllDrives": "true",
-            "includeItemsFromAllDrives": "true",
+            "q": query, "pageSize": 100, "orderBy": "name",
+            "fields": "nextPageToken,incompleteSearch,files(id,name,mimeType,modifiedTime,webViewLink,size)",
+            "supportsAllDrives": "true", "includeItemsFromAllDrives": "true",
         }
         if page_token:
             params["pageToken"] = page_token
-        result = google_get(f"{DRIVE_API}/files?{urlencode(params)}", token)
+        result = get(DRIVE_API + "/files?" + urlencode(params), token)
         items.extend(result.get("files", []))
         if result.get("incompleteSearch"):
-            raise RuntimeError("Google Drive reported an incomplete folder search.")
+            raise RuntimeError("Drive returned an incomplete search.")
         page_token = result.get("nextPageToken")
         if not page_token:
-            break
-    return items
+            return items
 
+def sheet_meta(file_id, token):
+    params = {"fields": "spreadsheetId,spreadsheetUrl,properties(title),sheets(properties(sheetId,title,index,gridProperties(rowCount,columnCount)))"}
+    return get(SHEETS_API + "/spreadsheets/" + quote(file_id, safe="") + "?" + urlencode(params), token)
 
-def get_spreadsheet_metadata(file_id: str, token: str) -> dict:
-    params = {
-        "fields": "spreadsheetId,spreadsheetUrl,properties(title),sheets(properties(sheetId,title,index,gridProperties(rowCount,columnCount)))"
-    }
-    return google_get(
-        f"{SHEETS_API}/spreadsheets/{quote(file_id, safe='')}?{urlencode(params)}",
-        token,
-    )
+def sheet_headers(file_id, tab_title, token):
+    title = tab_title.replace("'", "''")
+    a1 = "'" + title + "'!1:1"
+    url = SHEETS_API + "/spreadsheets/" + quote(file_id, safe="") + "/values/" + quote(a1, safe="") + "?majorDimension=ROWS"
+    values = get(url, token).get("values", [])
+    return [str(x).strip() for x in values[0]] if values else []
 
+def inspect_xlsx(item, token):
+    raw = get(DRIVE_API + "/files/" + quote(item["id"], safe="") + "?alt=media", token, binary=True)
+    wb = load_workbook(BytesIO(raw), read_only=True, data_only=True)
+    lines = []
+    for ws in wb.worksheets:
+        rows = min(ws.max_row or 0, 25)
+        cols = min(ws.max_column or 0, 80)
+        candidates = []
+        for row_no, row in enumerate(ws.iter_rows(min_row=1, max_row=rows, max_col=cols, values_only=True), start=1):
+            cells, terms = [], 0
+            for col_no, val in enumerate(row, start=1):
+                if val is None or str(val).strip() == "" or isinstance(val, (int, float)):
+                    continue
+                label = str(val).strip()
+                if len(label) > 100:
+                    continue
+                cells.append((col_no, label))
+                if any(term in label.casefold() for term in HEADER_TERMS):
+                    terms += 1
+            if len(cells) >= 2:
+                uniq = len({v.casefold() for _, v in cells}) / len(cells)
+                candidates.append((terms * 4 + len(cells) + uniq, row_no, cells))
+        candidates.sort(key=lambda x: (x[0], -x[1]), reverse=True)
+        lines.append("### Worksheet: " + ws.title)
+        lines.append("- Dimensions: " + str(ws.max_row or 0) + " rows x " + str(ws.max_column or 0) + " columns")
+        if candidates:
+            lines.append("- Likely header candidates (text labels only; numeric/data samples omitted):")
+            for _, row_no, cells in candidates[:3]:
+                labels = ", ".join("column " + str(col) + ": " + label for col, label in cells)
+                lines.append("  - Row " + str(row_no) + ": " + labels)
+        else:
+            lines.append("- No likely header row found in first 25 rows.")
+    wb.close()
+    return lines
 
-def get_headers(file_id: str, tab_title: str, token: str) -> list[str]:
-    escaped_title = tab_title.replace("'", "''")
-    a1_range = f"'{escaped_title}'!1:1"
-    url = (
-        f"{SHEETS_API}/spreadsheets/{quote(file_id, safe='')}/values/"
-        f"{quote(a1_range, safe='')}?majorDimension=ROWS"
-    )
-    values = google_get(url, token).get("values", [])
-    return [str(value).strip() for value in values[0]] if values else []
-
-
-def md(value: object) -> str:
-    return str(value).replace("|", r"\|").replace("\n", " ").strip()
-
-
-def main() -> int:
-    token = require_env("GOOGLE_ACCESS_TOKEN")
-    folder_id = require_env("GOOGLE_DRIVE_FOLDER_ID")
-    items = list_folder_items(folder_id, token)
+def main():
+    token, folder_id = env("GOOGLE_ACCESS_TOKEN"), env("GOOGLE_DRIVE_FOLDER_ID")
+    items = list_items(folder_id, token)
     if not items:
-        raise RuntimeError(
-            "The configured Drive folder appears empty or is not accessible to the service account."
-        )
-
-    native_sheets = [item for item in items if item.get("mimeType") == SHEET_MIME]
-    summary = [
-        "# MRD Google Drive folder inventory",
-        "",
-        f"Found **{len(items)} direct item(s)**, including **{len(native_sheets)} native Google Sheets file(s)**.",
-        "",
-        "> Privacy: this check reads file names/types and, for native Google Sheets only, worksheet names and row-1 headings. "
-        "It does not read data rows, download Excel files, or modify Drive content.",
-        "",
-        "| Name | File type | Last modified |",
-        "|---|---|---|",
+        raise RuntimeError("No direct items found in the configured Drive folder.")
+    by_name = {x.get("name"): x for x in items}
+    lines = [
+        "# MRD selected source workbook inspection", "",
+        "Read-only inspection: worksheet names, dimensions, and likely header labels only. "
+        "No data rows are printed and no Drive files are modified.", "",
+        "Drive folder contains " + str(len(items)) + " direct items.", "",
     ]
-
-    for item in items:
-        mime = item.get("mimeType", "Unknown")
-        kind = (
-            "Google Sheets"
-            if mime == SHEET_MIME
-            else "Folder"
-            if mime == FOLDER_MIME
-            else "Excel workbook"
-            if mime in ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                        "application/vnd.ms-excel")
-            else mime
-        )
-        summary.append(
-            f"| {md(item.get('name', 'Untitled'))} | {md(kind)} | {md(item.get('modifiedTime', 'Not supplied'))} |"
-        )
-
-    for index, item in enumerate(native_sheets, start=1):
-        file_id = item["id"]
-        metadata = get_spreadsheet_metadata(file_id, token)
-        title = metadata.get("properties", {}).get("title") or item.get("name", "Untitled")
-        summary.extend([
-            "",
-            f"## Google Sheet {index}: {md(title)}",
-            f"- Spreadsheet ID: {file_id}",
-            f"- Spreadsheet URL: {item.get('webViewLink') or metadata.get('spreadsheetUrl') or 'Not supplied'}",
-            "",
-            "| Worksheet | Column headings in row 1 |",
-            "|---|---|",
-        ])
-        tabs = sorted(
-            metadata.get("sheets", []),
-            key=lambda tab: tab.get("properties", {}).get("index", 0),
-        )
-        for tab in tabs:
-            title = tab.get("properties", {}).get("title", "Untitled tab")
-            headers = get_headers(file_id, title, token)
-            summary.append(
-                f"| {md(title)} | {md(', '.join(h for h in headers if h) or '(no headings in row 1)')} |"
-            )
-
-    summary.extend([
-        "",
-        "## Next action",
-        "- Native Google Sheets can be read directly by the synchronisation workflow.",
-        "- Excel workbooks need to be converted to Google Sheets or handled with a separate Excel-reading path.",
-        "- Files inside nested folders are not included in this direct-folder inventory.",
-    ])
-    rendered = "\n".join(summary)
-    print(rendered)
-    step_summary = os.environ.get("GITHUB_STEP_SUMMARY")
-    if step_summary:
-        with open(step_summary, "a", encoding="utf-8") as output:
-            output.write(rendered + "\n")
-    print("DISCOVERY COMPLETE: Drive folder inventory succeeded.")
-    return 0
-
-
+    native = by_name.get("Copy of Resources Required Consolidated")
+    if native and native.get("mimeType") == SHEET_MIME:
+        meta = sheet_meta(native["id"], token)
+        lines.extend(["## Google Sheet: " + meta.get("properties", {}).get("title", native["name"]),
+                      "- Spreadsheet ID: " + native["id"], "",
+                      "| Worksheet | Headings in row 1 |", "|---|---|"])
+        for tab in sorted(meta.get("sheets", []), key=lambda x: x.get("properties", {}).get("index", 0)):
+            title = tab.get("properties", {}).get("title", "Untitled")
+            headers = sheet_headers(native["id"], title, token)
+            lines.append("| " + title + " | " + (", ".join(x for x in headers if x) or "(no row-1 headings)") + " |")
+        lines.append("")
+    for target in sorted(TARGETS):
+        item = by_name.get(target)
+        if not item:
+            lines.extend(["## Missing selected workbook: " + target, ""])
+            continue
+        lines.extend(["## Excel workbook: " + target,
+                      "- Drive file ID: " + item["id"],
+                      "- Size: " + str(item.get("size", "not supplied")) + " bytes", ""])
+        lines.extend(inspect_xlsx(item, token))
+        lines.append("")
+    output = "\n".join(lines)
+    print(output)
+    summary = os.environ.get("GITHUB_STEP_SUMMARY")
+    if summary:
+        with open(summary, "a", encoding="utf-8") as fp:
+            fp.write(output + "\n")
+    print("INSPECTION COMPLETE: no source data rows printed or modified.")
+    
 if __name__ == "__main__":
     try:
-        raise SystemExit(main())
+        main()
     except Exception as exc:
-        print(f"::error title=Google Drive folder inventory failed::{exc}", file=sys.stderr)
+        print("::error title=Selected workbook inspection failed::" + str(exc), file=sys.stderr)
         raise SystemExit(1)
