@@ -1,0 +1,215 @@
+﻿tikina,province,division,island,pcode,reported,name_note,n_comm,n_failed,n_critical,n_approach,n_normal,n_nodata,population,pop_est,pop_failed,pop_crit,pop_appr,pop_normal,pct_crit,share_cls,worst,data_date
+Baravi,Nadroga/Navosa,Western,Viti Levu,FJ20801D01,Y,,2,0,2,0,0,0,160,0,0,160,0,0,100.0,60% or more,Critical,2026-11-22
+Batiki,Lomaiviti,Eastern,Batiki,FJ30601D01,Y,,4,4,0,0,0,0,216,216,216,0,0,0,100.0,60% or more,Source failed / no water,2026-11-22
+Batiwai,Serua,Central,Viti Levu,FJ41301D01,Y,,4,0,3,1,0,0,163,163,0,163,0,0,100.0,60% or more,Critical,2026-11-22
+Bau,Tailevu,Central,Viti Levu,FJ41401D01,Y,,1,0,0,1,0,0,0,0,0,0,0,0,,No population - worst status: Approaching critical,Approaching critical,2026-11-22
+Bua,Bua,Northern,Vanua Levu,FJ10201D01,Y,,9,0,7,1,1,0,1474,0,0,623,182,669,42.3,30-60%,Critical,2026-11-22
+Bulu,Ba,Western,Viti Levu,FJ20101D01,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Burebasaga,Rewa,Central,Viti Levu,FJ41202D03,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Buretu,Tailevu,Central,Viti Levu,FJ41402D06,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Bureivanua,Ra,Western,Viti Levu,FJ21101D01,Y,,3,0,0,3,0,0,957,0,0,0,957,0,0.0,None,Approaching critical,2026-11-22
+Bureiwai,Ra,Western,Viti Levu,FJ21101D02,Y,,3,0,0,3,0,0,375,0,0,0,375,0,0.0,None,Approaching critical,2026-11-22
+Bureta,Lomaiviti,Eastern,Ovalau,FJ30605D07,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Cicia,Lau,Eastern,Cicia,FJ30501D01,Y,,1,0,1,0,0,0,1028,1028,0,1028,0,0,100.0,60% or more,Critical,2026-11-22
+Cikobia,Macuata,Northern,Cikobia,FJ10701D01,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Conua,Nadroga/Navosa,Western,Viti Levu,FJ20801D02,Y,,1,0,1,0,0,0,182,0,0,182,0,0,100.0,60% or more,Critical,2026-11-22
+Cuvu,Nadroga/Navosa,Western,Viti Levu,FJ20802D04,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Dama,Bua,Northern,Vanua Levu,FJ10202D04,Y,,11,0,5,5,0,1,1280,131,0,177,1103,0,13.8,Under 30%,Critical,2026-11-22
+Dawasamu,Tailevu,Central,Viti Levu,FJ41403D10,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Deuba,Serua,Central,Viti Levu,FJ41302D03,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Dogotuki,Macuata,Northern,Vanua Levu,FJ10702D02,Y,,9,9,0,0,0,0,330,0,330,0,0,0,100.0,60% or more,Source failed / no water,2026-11-22
+Dravo,Tailevu,Central,Viti Levu,FJ41401D02,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Dreketi (Macuata),Macuata,Northern,Vanua Levu,FJ10704D08,Y,,13,1,12,0,0,0,1030,0,70,960,0,0,100.0,60% or more,Source failed / no water,2026-11-22
+Dreketi (Rewa),Rewa,Central,Viti Levu,FJ41202D04,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Itumuta,Rotuma,Eastern,Rotuma,FJ31501D01,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Itutiu,Rotuma,Eastern,Rotuma,FJ31502D02,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Juju,Rotuma,Eastern,Rotuma,FJ31503D03,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Kavula,Ra,Western,Viti Levu,FJ21101D03,Y,,6,0,0,6,0,0,972,0,0,0,972,0,0.0,None,Approaching critical,2026-11-22
+Koro,Lomaiviti,Eastern,Koro,FJ30603D05,Y,,4,0,4,0,0,0,718,718,0,718,0,0,100.0,60% or more,Critical,2026-11-22
+Koroalau,Cakaudrove,Northern,Vanua Levu,FJ10306D13,Y,,3,0,3,0,0,0,371,0,0,371,0,0,100.0,60% or more,Critical,2026-11-22
+Korolevu,Nadroga/Navosa,Western,Viti Levu,FJ20801D03,Y,,4,0,3,1,0,0,859,0,0,806,53,0,93.8,60% or more,Critical,2026-11-22
+Kubulau,Bua,Northern,Vanua Levu,FJ10202D05,Y,,12,0,0,12,0,0,797,0,0,0,797,0,0.0,None,Approaching critical,2026-11-22
+Labasa,Macuata,Northern,Vanua Levu,FJ10703D05,Y,,48,10,38,0,0,0,11493,0,1165,10328,0,0,100.0,60% or more,Source failed / no water,2026-11-22
+Lakeba,Lau,Eastern,Lakeba,FJ30503D07,Y,,2,0,0,1,1,0,1216,0,0,0,744,472,0.0,None,Approaching critical,2026-11-22
+Laucala,Cakaudrove,Northern,Yanuca,FJ10308D18,Y,,15,0,15,0,0,0,953,72,0,953,0,0,100.0,60% or more,Critical,2026-11-22
+Lawaki,Ra,Western,Viti Levu,FJ21102D08,Y,,1,0,0,1,0,0,110,0,0,0,110,0,0.0,None,Approaching critical,2026-11-22
+Lekutu,Bua,Northern,Vanua Levu,FJ10201D02,Y,,19,0,17,0,2,0,1553,0,0,1193,0,360,76.8,60% or more,Critical,2026-11-22
+Lovonivanua,Lomaiviti,Eastern,Ovalau,FJ30605D09,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Lovoniwai,Lomaiviti,Eastern,Ovalau,FJ30605D10,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Lutu,Naitasiri,Central,Viti Levu,FJ40902D05,Y,,1,0,1,0,0,0,0,0,0,0,0,0,,No population - worst status: Critical,Critical,2026-11-22
+Macuata,Macuata,Northern,Vanua Levu,FJ10704D09,Y,,13,8,5,0,0,0,815,0,451,364,0,0,100.0,60% or more,Source failed / no water,2026-11-22
+Magodro,Ba,Western,Viti Levu,FJ20102D03,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Malha'a,Rotuma,Eastern,Rotuma,FJ31504D04,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Mali,Macuata,Northern,Vanua Levu,FJ10704D10,Y,,2,2,0,0,0,0,228,0,228,0,0,0,100.0,60% or more,Source failed / no water,2026-11-22
+Malolo,Nadroga/Navosa,Western,Malolo,FJ20803D06,Y,,4,0,4,0,0,0,1919,0,0,1919,0,0,100.0,60% or more,Critical,2026-11-22
+Malomalo,Nadroga/Navosa,Western,Viti Levu,FJ20804D07,Y,,3,0,2,1,0,0,1045,431,0,658,387,0,63.0,60% or more,Critical,2026-11-22
+Matailobau,Naitasiri,Central,Viti Levu,FJ40902D06,Y,,1,0,1,0,0,0,0,0,0,0,0,0,,No population - worst status: Critical,Critical,2026-11-22
+Mataso,Ra,Western,Viti Levu,FJ21101D04,Y,,4,0,1,3,0,0,643,0,0,116,527,0,18.0,Under 30%,Critical,2026-11-22
+Mavua,Nadroga/Navosa,Western,Viti Levu,FJ20807D17,Y,,1,0,1,0,0,0,378,0,0,378,0,0,100.0,60% or more,Critical,2026-11-22
+Momi,Nadroga/Navosa,Western,Viti Levu,FJ20804D08,Y,,2,0,2,0,0,0,1326,0,0,1326,0,0,100.0,60% or more,Critical,2026-11-22
+Moturiki,Lomaiviti,Eastern,Motoriki,FJ30605D11,Y,,1,0,1,0,0,0,811,811,0,811,0,0,100.0,60% or more,Critical,2026-11-22
+Muaira,Naitasiri,Central,Viti Levu,FJ40905D13,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Nababa,Ra,Western,Viti Levu,FJ21102D09,Y,,2,0,1,1,0,0,396,0,0,264,132,0,66.7,60% or more,Critical,2026-11-22
+Nabaitavo,Naitasiri,Central,Viti Levu,FJ40901D01,Y,,1,0,1,0,0,0,0,0,0,0,0,0,,No population - worst status: Critical,Critical,2026-11-22
+Naboubuco,Naitasiri,Central,Viti Levu,FJ40905D14,Y,,1,0,0,1,0,0,230,230,0,0,230,0,0.0,None,Approaching critical,2026-11-22
+Nabukelevu,Kadavu,Eastern,Kadavu,FJ30401D01,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Naceva,Kadavu,Eastern,Kadavu,FJ30402D03,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Nadi (Bua),Bua,Northern,Vanua Levu,FJ10205D10,Y,,6,0,3,2,1,0,735,0,0,215,520,0,29.3,Under 30%,Critical,2026-11-22
+Nadogo,Macuata,Northern,Vanua Levu,FJ10703D06,Y,,28,22,6,0,0,0,2130,0,1686,444,0,0,100.0,60% or more,Source failed / no water,2026-11-22
+Nadrau,Nadroga/Navosa,Western,Viti Levu,FJ20806D13,Y,,1,0,0,1,0,0,733,733,0,0,733,0,0.0,None,Approaching critical,2026-11-22
+Nagonenicolo,Naitasiri,Central,Viti Levu,FJ40902D07,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Nailega,Tailevu,Central,Viti Levu,FJ41405D18,Y,,1,0,1,0,0,0,0,0,0,0,0,0,,No population - worst status: Critical,Critical,2026-11-22
+Nailaga,Ba,Western,Viti Levu,FJ20101D02,Y,,7,0,0,7,0,0,0,0,0,0,0,0,,No population - worst status: Approaching critical,Approaching critical,2026-11-22
+Nailuva,Ra,Western,Viti Levu,FJ21104D15,Y,,4,0,4,0,0,0,719,0,0,719,0,0,100.0,60% or more,Critical,2026-11-22
+Nairai,Lomaiviti,Eastern,Nairai,FJ30604D06,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Naitasiri,Naitasiri,Central,Viti Levu,FJ40903D09,Y,,4,0,2,2,0,0,290,290,0,290,0,0,100.0,60% or more,Critical,2026-11-22
+Nakasaleka,Kadavu,Eastern,Kadavu,FJ30403D05,Y,,2,0,2,0,0,0,298,298,0,298,0,0,100.0,60% or more,Critical,2026-11-22
+Nakelo,Tailevu,Central,Viti Levu,FJ41402D07,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Naroko (Saivou),Ra,Western,Viti Levu,FJ21104D16,Y,,5,0,0,5,0,0,991,0,0,0,991,0,0.0,None,Approaching critical,2026-11-22
+,Ra,Western,Viti Levu,FJ21101D05,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Nakuailava,Ra,Western,Viti Levu,FJ21101D06,Y,,5,0,3,2,0,0,1196,0,0,518,678,0,43.3,30-60%,Critical,2026-11-22
+Navukalagi,Lomaiviti,Eastern,Gau,FJ30602D02,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Nalaba,Ra,Western,Viti Levu,FJ21104D17,Y,,4,0,1,3,0,0,1049,0,0,206,843,0,19.6,Under 30%,Critical,2026-11-22
+Nalawa,Ra,Western,Viti Levu,FJ21102D10,Y,Name blank in GIS district layer; added from community reports,5,0,4,1,0,0,1269,0,0,1099,170,0,86.6,60% or more,Critical,2026-11-22
+Nalotawa,Ba,Western,Viti Levu,FJ20102D04,Y,,1,0,0,1,0,0,349,349,0,0,349,0,0.0,None,Approaching critical,2026-11-22
+Naloto (Ba),Ba,Western,Viti Levu,FJ20102D05,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Naloto (Tailevu),Tailevu,Central,Viti Levu,FJ41405D19,Y,,1,0,0,1,0,0,0,0,0,0,0,0,,No population - worst status: Approaching critical,Approaching critical,2026-11-22
+Namalata,Tailevu,Central,Viti Levu,FJ41404D13,Y,,1,0,1,0,0,0,0,0,0,0,0,0,,No population - worst status: Critical,Critical,2026-11-22
+Namara,Tailevu,Central,Viti Levu,FJ41401D03,Y,,1,0,0,1,0,0,0,0,0,0,0,0,,No population - worst status: Approaching critical,Approaching critical,2026-11-22
+Namata,Tailevu,Central,Viti Levu,FJ41401D04,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Namataku,Nadroga/Navosa,Western,Viti Levu,FJ20806D14,Y,,3,0,0,3,0,0,807,0,0,0,807,0,0.0,None,Approaching critical,2026-11-22
+Namena,Tailevu,Central,Viti Levu,FJ41403D11,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Namosi,Namosi,Central,Viti Levu,FJ41001D01,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Namuka,Macuata,Northern,Druadrua,FJ10702D03,Y,,8,3,5,0,0,0,360,0,135,225,0,0,100.0,60% or more,Source failed / no water,2026-11-22
+Naqarawai,Namosi,Central,Viti Levu,FJ41003D03,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Naroko,Ra,Western,Viti Levu,FJ21104D18,Y,,2,0,0,2,0,0,486,0,0,0,486,0,0.0,None,Approaching critical,2026-11-22
+Nasau,Ra,Western,Viti Levu,FJ21102D11,Y,,5,0,3,2,0,0,1211,0,0,567,644,0,46.8,30-60%,Critical,2026-11-22
+Nasautoka,Tailevu,Central,Viti Levu,FJ41405D20,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Nasikawa,Nadroga/Navosa,Western,Viti Levu,FJ20807D18,Y,,1,0,1,0,0,0,116,0,0,116,0,0,100.0,60% or more,Critical,2026-11-22
+Nasinu,Lomaiviti,Eastern,Ovalau,FJ30605D12,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Natewa,Cakaudrove,Northern,Vanua Levu,FJ10305D11,Y,,7,0,1,6,0,0,1419,0,0,179,1240,0,12.6,Under 30%,Critical,2026-11-22
+Nausori,Tailevu,Central,Viti Levu,FJ41401D05,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Navakasiga,Bua,Northern,Vanua Levu,FJ10201D03,Y,,5,0,2,3,0,0,636,0,0,177,459,0,27.8,Under 30%,Critical,2026-11-22
+Navatu,Cakaudrove,Northern,Vanua Levu,FJ10302D05,Y,,8,0,6,2,0,0,1456,0,0,1213,243,0,83.3,60% or more,Critical,2026-11-22
+Navatusila,Nadroga/Navosa,Western,Viti Levu,FJ20806D15,Y,,1,0,0,1,0,0,1154,1154,0,0,1154,0,0.0,None,Approaching critical,2026-11-22
+Naviti,Ba,Western,Naviti,FJ20104D08,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Navitilevu,Ra,Western,Viti Levu,FJ21101D07,Y,,5,0,0,5,0,0,588,0,0,0,588,0,0.0,None,Approaching critical,2026-11-22
+Navolau,Ra,Western,Viti Levu,FJ21103D12,Y,,4,0,0,4,0,0,872,0,0,0,872,0,0.0,None,Approaching critical,2026-11-22
+Navuakece,Naitasiri,Central,Viti Levu,FJ40901D02,Y,,3,0,2,1,0,0,163,163,0,163,0,0,100.0,60% or more,Critical,2026-11-22
+Nawaka,Ba,Western,Viti Levu,FJ20105D11,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Naweni,Cakaudrove,Northern,Vanua Levu,FJ10302D06,Y,,3,0,3,0,0,0,1164,0,0,1164,0,0,100.0,60% or more,Critical,2026-11-22
+Nayau,Lau,Eastern,Nayau,FJ30509D17,Y,,1,0,1,0,0,0,293,293,0,293,0,0,100.0,60% or more,Critical,2026-11-22
+Nayavu,Tailevu,Central,Viti Levu,FJ41405D21,Y,,1,0,1,0,0,0,0,0,0,0,0,0,,No population - worst status: Critical,Critical,2026-11-22
+Noatau,Rotuma,Eastern,Rotuma,FJ31505D05,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Noco,Rewa,Central,Viti Levu,FJ41202D05,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Noikoro,Nadroga/Navosa,Western,Viti Levu,FJ20806D16,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Noimalu,Naitasiri,Central,Viti Levu,FJ40905D15,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Nokonoko,Nadroga/Navosa,Western,Viti Levu,FJ20805D10,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Nuku (Serua),Serua,Central,Viti Levu,FJ41301D02,Y,,2,1,1,0,0,0,280,0,280,0,0,0,100.0,60% or more,Source failed / no water,2026-11-22
+Nuku (Tailevu),Tailevu,Central,Viti Levu,FJ41402D08,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Oinafa,Rotuma,Eastern,Rotuma,FJ31506D06,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Oneata,Lau,Eastern,Oneata,FJ30510D18,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Ono,Lau,Eastern,Ono-i-Lau,FJ30403D06,Y,,5,0,4,1,0,0,397,397,0,248,149,0,62.5,60% or more,Critical,2026-11-22
+Pepjei,Rotuma,Eastern,Rotuma,FJ31507D07,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Qalimare,Nadroga/Navosa,Western,Viti Levu,FJ20807D19,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Qaliyalatina,Ba,Western,Viti Levu,FJ20106D14,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Rabi,Cakaudrove,Northern,Rabi,FJ10303D08,Y,,4,0,0,4,0,0,692,116,0,0,692,0,0.0,None,Approaching critical,2026-11-22
+Rakiraki,Ra,Western,Viti Levu,FJ21103D13,Y,,4,0,1,1,2,0,2053,0,0,479,454,1120,23.3,Under 30%,Critical,2026-11-22
+Rara,Naitasiri,Central,Viti Levu,FJ40901D03,Y,,1,0,1,0,0,0,462,462,0,462,0,0,100.0,60% or more,Critical,2026-11-22
+Raviravi (Beqa),Rewa,Central,Beqa,FJ41201D01,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Raviravi (Ra),Ra,Western,Viti Levu,FJ21103D14,Y,,9,0,2,4,3,0,3118,0,0,1020,1289,809,32.7,30-60%,Critical,2026-11-22
+Ravitaki,Kadavu,Eastern,Kadavu,FJ30404D07,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Rukuruku,Ba,Western,Viti Levu,FJ20105D12,Y,,5,0,0,5,0,0,742,0,0,0,742,0,0.0,None,Approaching critical,2026-11-22
+Ruwailevu,Nadroga/Navosa,Western,Viti Levu,FJ20807D20,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Sabeto,Ba,Western,Viti Levu,FJ20107D17,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Saivou,Ra,Western,Viti Levu,FJ21104D19,Y,Name blank in GIS district layer; added from community reports,7,0,0,7,0,0,1252,0,0,0,1252,0,0.0,None,Approaching critical,2026-11-22
+Sanima,Kadavu,Eastern,Kadavu,FJ30404D08,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Saqani,Cakaudrove,Northern,Vanua Levu,FJ10304D09,Y,,8,2,4,1,1,0,396,0,57,228,70,41,72.0,60% or more,Source failed / no water,2026-11-22
+Sasa,Macuata,Northern,Vanua Levu,FJ10705D11,Y,,13,2,11,0,0,0,786,0,115,671,0,0,100.0,60% or more,Source failed / no water,2026-11-22
+Savatu,Ba,Western,Viti Levu,FJ20106D15,Y,,1,0,0,1,0,0,64,0,0,0,64,0,0.0,None,Approaching critical,2026-11-22
+Savusavu,Cakaudrove,Northern,Vanua Levu,FJ10302D07,Y,,2,0,2,0,0,0,635,0,0,635,0,0,100.0,60% or more,Critical,2026-11-22
+Sawaieke,Lomaiviti,Eastern,Gau,FJ30602D03,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Sawakasa,Tailevu,Central,Viti Levu,FJ41403D12,Y,,1,0,0,0,1,0,0,0,0,0,0,0,,No population - worst status: Normal,Normal,2026-11-22
+Sawau,Rewa,Central,Beqa,FJ41201D02,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Seaqaqa,Macuata,Northern,Vanua Levu,FJ10705D12,Y,,21,12,9,0,0,0,1490,74,975,515,0,0,100.0,60% or more,Source failed / no water,2026-11-22
+Serua,Serua,Central,Viti Levu,FJ41302D04,Y,,4,0,4,0,0,0,842,822,0,842,0,0,100.0,60% or more,Critical,2026-11-22
+Sigatoka,Nadroga/Navosa,Western,Viti Levu,FJ20805D11,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Sikituru,Ba,Western,Viti Levu,FJ20103D07,Y,,3,0,0,3,0,0,707,0,0,0,707,0,0.0,None,Approaching critical,2026-11-22
+Solevu,Bua,Northern,Vanua Levu,FJ10203D07,Y,,5,0,0,4,1,0,650,0,0,0,431,219,0.0,None,Approaching critical,2026-11-22
+Soloira,Naitasiri,Central,Viti Levu,FJ40904D12,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Tai,Tailevu,Central,Viti Levu,FJ41404D14,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Taivugalei,Tailevu,Central,Viti Levu,FJ41404D15,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Tavua,Ba,Western,Viti Levu,FJ20106D16,Y,,5,0,4,1,0,0,1590,0,0,845,745,0,53.1,30-60%,Critical,2026-11-22
+Tavuki,Kadavu,Eastern,Kadavu,FJ30404D09,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Tawake,Cakaudrove,Northern,Vanua Levu,FJ10304D10,Y,,8,5,3,0,0,0,197,53,60,137,0,0,100.0,60% or more,Source failed / no water,2026-11-22
+Toga,Rewa,Central,Viti Levu,FJ41203D07,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Tokaimalo,Ra,Western,Viti Levu,FJ21104D20,Y,,5,0,0,5,0,0,532,0,0,0,532,0,0.0,None,Approaching critical,2026-11-22
+Tokatoka,Tailevu,Central,Viti Levu,FJ41402D9,Y,,1,0,0,1,0,0,0,0,0,0,0,0,,No population - worst status: Approaching critical,Approaching critical,2026-11-22
+Tunuloa,Cakaudrove,Northern,Vanua Levu,FJ10305D12,Y,,12,0,6,5,0,1,2548,84,0,1840,654,0,72.2,60% or more,Critical,2026-11-22
+Tuva,Nadroga/Navosa,Western,Viti Levu,FJ20802D05,Y,,1,0,1,0,0,0,170,0,0,170,0,0,100.0,60% or more,Critical,2026-11-22
+Udu,Macuata,Northern,Vanua Levu,FJ10702D04,Y,,3,0,3,0,0,0,328,0,0,328,0,0,100.0,60% or more,Critical,2026-11-22
+Vanuaso,Lomaiviti,Eastern,Gau,FJ30602D04,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Vatulele,Nadroga/Navosa,Western,Vatulele,FJ20808D21,Y,,4,0,4,0,0,0,897,0,0,897,0,0,100.0,60% or more,Critical,2026-11-22
+Vaturova,Cakaudrove,Northern,Vanua Levu,FJ10306D14,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Vaturu,Ba,Western,Viti Levu,FJ20105D13,Y,,2,0,0,2,0,0,1044,0,0,0,1044,0,0.0,None,Approaching critical,2026-11-22
+Veinuqa,Namosi,Central,Viti Levu,FJ41003D04,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Veivatuloa,Namosi,Central,Viti Levu,FJ41002D02,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Verata,Tailevu,Central,Viti Levu,FJ41404D16,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Viria,Naitasiri,Central,Viti Levu,FJ40901D04,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Vitogo,Ba,Western,Viti Levu,FJ20107D18,Y,,1,0,1,0,0,0,264,264,0,264,0,0,100.0,60% or more,Critical,2026-11-22
+Vuda,Ba,Western,Viti Levu,FJ20107D19,Y,,1,0,0,1,0,0,0,0,0,0,0,0,,No population - worst status: Approaching critical,Approaching critical,2026-11-22
+Vugalei,Tailevu,Central,Viti Levu,FJ41404D17,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Vuna (Cakaudrove),Cakaudrove,Northern,Taveuni,FJ10301D04,Y,,20,0,20,0,0,0,2985,0,0,2985,0,0,100.0,60% or more,Critical,2026-11-22
+Vuna (Naitasiri),Naitasiri,Central,Viti Levu,FJ40903D10,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Vutia,Rewa,Central,Viti Levu,FJ41203D08,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Vuya,Bua,Northern,Vanua Levu,FJ10202D06,Y,,6,0,4,2,0,0,957,0,0,255,702,0,26.6,Under 30%,Critical,2026-11-22
+Wai,Nadroga/Navosa,Western,Viti Levu,FJ20804D09,Y,,1,0,0,1,0,0,700,700,0,0,700,0,0.0,None,Approaching critical,2026-11-22
+Waicoba,Nadroga/Navosa,Western,Viti Levu,FJ20805D12,Y,,2,0,2,0,0,0,586,316,0,586,0,0,100.0,60% or more,Critical,2026-11-22
+Waidina,Naitasiri,Central,Viti Levu,FJ40903D11,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Wailevu,Macuata,Northern,Vanua Levu,FJ10703D07,Y,,5,2,3,0,0,0,948,0,206,742,0,0,100.0,60% or more,Source failed / no water,2026-11-22
+Wailevu East,Cakaudrove,Northern,Vanua Levu,FJ10307D16,Y,,3,3,0,0,0,0,523,0,523,0,0,0,100.0,60% or more,Source failed / no water,2026-11-22
+Wailevu West,Cakaudrove,Northern,Vanua Levu,FJ10307D17,Y,,11,1,10,0,0,0,1391,0,132,1259,0,0,100.0,60% or more,Source failed / no water,2026-11-22
+Wailotua,Tailevu,Central,Viti Levu,FJ41405D22,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Waima,Naitasiri,Central,Viti Levu,FJ40902D08,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Wainikeli,Cakaudrove,Northern,Qamea,FJ10308D19,Y,,57,0,18,39,0,0,3682,0,0,792,2890,0,21.5,Under 30%,Critical,2026-11-22
+Wainikoroiluva,Namosi,Central,Viti Levu,FJ41003D05,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Wainimala,Naitasiri,Central,Viti Levu,FJ40905D16,Y,,1,0,1,0,0,0,0,0,0,0,0,0,,No population - worst status: Critical,Critical,2026-11-22
+Wainunu,Bua,Northern,Vanua Levu,FJ10203D08,Y,,15,0,9,6,0,0,1087,0,0,679,408,0,62.5,60% or more,Critical,2026-11-22
+Wairiki,Cakaudrove,Northern,Vanua Levu,FJ10306D15,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Wakaya,Lomaiviti,Eastern,Wakaya,FJ30606D14,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Waya,Ba,Western,Waya,FJ20104D09,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Yale,Kadavu,Eastern,Kadavu,FJ30402D04,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Yawe,Kadavu,Eastern,Kadavu,FJ30401D02,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Levuka,Lomaiviti,Eastern,Makogai,FJ30605D08,Y,,2,0,0,2,0,0,255,255,0,0,255,0,0.0,None,Approaching critical,2026-11-22
+Totoya,Lau,Eastern,Totoya,FJ30512D19,Y,,1,0,1,0,0,0,468,468,0,468,0,0,100.0,60% or more,Critical,2026-11-22
+Totoya (Vanuavatu),Lau,Eastern,Vanuavatu,FJ30512D20,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Kabara (Vuaqava),Lau,Eastern,Vuaqava,FJ30502D05,Y,,1,0,1,0,0,0,0,0,0,0,0,0,,No population - worst status: Critical,Critical,2026-11-22
+Kabara (Namuka-i-Lau),Lau,Eastern,Namuka-i-Lau,FJ30502D04,Y,,1,0,0,1,0,0,0,0,0,0,0,0,,No population - worst status: Approaching critical,Approaching critical,2026-11-22
+Kabara,Lau,Eastern,Kabara,FJ30502D02,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Kabara (Marabo),Lau,Eastern,Marabo,FJ30502D03,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Moce,Lau,Eastern,Moce,FJ30507D13,Y,,1,0,1,0,0,0,428,428,0,428,0,0,100.0,60% or more,Critical,2026-11-22
+Moce (Komo),Lau,Eastern,Moce,FJ30502D06,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Vulaga (Fulaga),Lau,Eastern,Fulaga,FJ30513D21,Y,,1,0,1,0,0,0,0,0,0,0,0,0,,No population - worst status: Critical,Critical,2026-11-22
+Vulaga (Ogea Levu),Lau,Eastern,Ogea Levu,FJ30513D23,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Vulaga (Ogea Driki),Lau,Eastern,Ogea Driki,FJ30513D22,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Lomaloma (Munia),Lau,Eastern,Munia,FJ30504D08,Y,,1,0,1,0,0,0,0,0,0,0,0,0,,No population - worst status: Critical,Critical,2026-11-22
+Lomaloma (Cikobia-i-Lau),Lau,Eastern,Cikobia-i-Lau,FJ30508D15,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Lomaloma (Tuvuca),Lau,Eastern,Tuvuca,FJ30504D09,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Lomaloma (Mago),Lau,Eastern,Mago,FJ30514D26,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Lomaloma (Vatuvara),Lau,Eastern,Vatuvara,FJ30514D27,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Lomaloma (Kanacea),Lau,Eastern,Kanacea,FJ30514D25,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Lomaloma (Avea),Lau,Eastern,Avea,FJ30508D14,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Lomaloma - Mualevu (Vanua Balavu),Lau,Eastern,Vanua Balavu,FJ30508D16,Y,,1,0,1,0,0,0,689,689,0,689,0,0,100.0,60% or more,Critical,2026-11-22
+Lomaloma (Vanua Balavu),Lau,Eastern,Vanua Balavu,FJ30504D10,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Cakaudrove (Yacata),Cakaudrove,Northern,Yacata,FJ10301D03,Y,,1,0,1,0,0,0,183,183,0,183,0,0,100.0,60% or more,Critical,2026-11-22
+Cakaudrove (Naitauba),Cakaudrove,Eastern,Naitauba,FJ30514D24,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Cakaudrove (Vanua Levu),Cakaudrove,Northern,Vanua Levu,FJ10301D02,Y,,10,0,4,6,0,0,1623,0,0,865,758,0,53.3,30-60%,Critical,2026-11-22
+Cakaudrove (Taveuni),Cakaudrove,Northern,Taveuni,FJ10301D01,Y,,59,0,20,31,7,1,5738,0,0,1534,3252,888,26.7,Under 30%,Critical,2026-11-22
+Nadi (Ba),Ba,Western,Viti Levu,FJ20103D06,Y,,11,5,5,1,0,0,3242,0,2553,535,154,0,95.2,60% or more,Source failed / no water,2026-11-22
+Makogai,Lomaiviti,Eastern,Makogai,FJ30606D13,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Matuku,Lau,Eastern,Matuku,FJ30505D11,Y,,1,0,1,0,0,0,522,522,0,522,0,0,100.0,60% or more,Critical,2026-11-22
+Moala,Lau,Eastern,Moala,FJ30505D12,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Suva,Rewa,Central,Viti Levu,FJ41203D06,Y,,1,0,0,1,0,0,632,632,0,0,632,0,0.0,None,Approaching critical,2026-11-22
+Rewa,Rewa,Central,Viti Levu,FJ41203D06,Y,,1,0,0,1,0,0,0,0,0,0,0,0,,No population - worst status: Approaching critical,Approaching critical,2026-11-22
+Lomaloma (Tuvuca),,,,,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
+Lomaloma (Tuvuca),,,,,N,,0,0,0,0,0,0,0,0,0,0,0,0,,No report,No report,2026-11-22
