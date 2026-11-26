@@ -314,7 +314,7 @@ PURCHASING.sections.forEach(section => {
   const opt=document.createElement("option");opt.value=supplier;opt.textContent=supplier;$("purchaseSupplier").appendChild(opt);
 });
 const pumpSection = PURCHASING.sections.find(x=>x.name==="PUMPING LINE");
-const pumpReported = PURCHASING.reported_summary.find(x=>x.name==="Pumping Line");
+const pumpReported = PURCHASING.reported_summary.find(x=>String(x.name||"").trim().toUpperCase()==="PUMPING LINE");
 const pumpDiff = Number(pumpReported?.source_amount || 0) - Number(pumpSection?.subtotal || 0);
 const grandDiff = Number(sourceGrandTotal || 0) - Number(correctedGrandTotal || 0);
 if (Math.abs(pumpDiff) > 0.005 || Math.abs(grandDiff) > 0.005) {

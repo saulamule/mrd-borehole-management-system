@@ -2,12 +2,12 @@
 
 **Repository:** Public GitHub repository (website and repository content are publicly accessible)  
 **Administration:** One designated administrator  
-**Master register:** `data/boreholes.csv`
+**Live source:** Restricted Google Drive folder containing the borehole register, materials workbook and Resources Required spreadsheet.
 
 This project provides a single-administrator workflow for maintaining the MRD unreticulated borehole register and generating a read-only GIS and operational dashboard.
 
 ## Contents
-- `data/boreholes.csv` — operational master register (93 source records).
+- `data/boreholes.csv` — fallback/bootstrap snapshot; the live sync replaces this file only in the temporary Actions workspace.
 - `dashboard_template.html` — responsive map and monitoring dashboard template.
 - `generate_dashboard.py` — generates `docs/index.html` from the CSV.
 - `validate_data.py` — checks required fields, duplicate IDs and coordinate quality.
@@ -15,6 +15,7 @@ This project provides a single-administrator workflow for maintaining the MRD un
 - `ADMIN_GUIDE.md` — register update and administration instructions.
 - `.github/workflows/deploy-dashboard.yml` — validates and builds repository data; Pages publishing is approval-gated.
 - `.github/workflows/google-drive-sync.yml` — scheduled read-only Google Drive synchronisation and approval-gated Pages deployment.
+- `GOOGLE_DRIVE_SYNC_GUIDE.md` — setup, data-protection and publication instructions.
 - `scripts/sync_google_sources.py` — imports the three selected sources into the temporary runner workspace.
 
 ## Current deployment status
@@ -22,14 +23,13 @@ The repository is private. **Public website deployment is intentionally not enab
 
 After approval, configure **Settings → Pages → Source → GitHub Actions**, then enable the deployment steps in the workflow. See the official [GitHub Pages publishing documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
 
-## Update the register
-1. Download `data/boreholes.csv` and open it in Excel using UTF-8.
-2. Edit the required record or append a new record. Keep the column headings unchanged.
-3. Save as **CSV UTF-8** and retain the filename `boreholes.csv`.
-4. Replace `data/boreholes.csv` in this repository and commit to `main`.
-5. Review the **Actions** run and resolve any validation failures or coordinate warnings.
+## Update the source data
+1. Open the restricted MRD Borehole Dashboard Data folder in Google Drive.
+2. Update the selected borehole workbook (worksheet `unreticulated`), materials workbook (worksheet `All Materials`), or Resources Required Google Sheet.
+3. Keep the source filenames, worksheet names and required column headings unchanged. The sync workflow reads the Excel workbooks directly; they do not need to be converted to Google Sheets.
+4. The workflow runs every 15 minutes. To run it manually, open **Actions → Sync MRD Dashboard from Google Drive → Run workflow**.
+5. Review the run result. Validation failures stop the build and leave the currently deployed dashboard unchanged.
 
-The dashboard is read-only. Only repository write/admin users can change the register. See `ADMIN_GUIDE.md`.
 
 ## Validation notes
 The supplied register contains 93 rows. The validation script passes required-column and duplicate-ID checks, but flags missing borehole identifiers and several coordinates outside Fiji bounds or missing. These records are retained for review and are not plotted on the map. No coordinates have been guessed or automatically corrected.
