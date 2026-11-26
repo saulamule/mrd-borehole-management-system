@@ -123,7 +123,7 @@ td,th{padding:10px;border-bottom:1px solid #e8edf2}tbody tr:hover{background:#f4
   </section>
   <div class="purchase-notice">
     <b>Currency:</b> All material prices, unit costs, subtotals and totals in this register are in Fiji dollars (FJD).
-    Quantities for one site and four sites are displayed exactly as entered; blank quantities, unit costs, suppliers or amounts have not been estimated.
+    This is a one-site material schedule. The latest CSV does not contain a four-site quantity column. Blank quantities, prices or suppliers remain unfilled rather than estimated.
   </div>
   <div class="purchase-warning" id="purchaseCostWarning"></div>
   <section class="panel purchase-filters">
@@ -141,13 +141,13 @@ td,th{padding:10px;border-bottom:1px solid #e8edf2}tbody tr:hover{background:#f4
     </div>
     <div class="table-wrap">
       <table class="purchase-table">
-        <thead><tr><th>Work section</th><th>Material description</th><th>Qty<br>1 site</th><th>Qty<br>4 sites</th><th>Unit cost<br>(FJD)</th><th>Supplier</th><th>Amount<br>1 site (FJD)</th><th>Follow-up</th></tr></thead>
+        <thead><tr><th>Work section</th><th>Material description</th><th>Qty<br>1 site</th><th>Unit cost<br>(FJD)</th><th>Supplier</th><th>Amount<br>1 site (FJD)</th><th>Follow-up</th></tr></thead>
         <tbody id="purchaseRows"></tbody>
       </table>
     </div>
   </section>
   <section class="panel">
-    <h2>Section subtotals from the material list</h2>
+    <h2>Section subtotals — one site (FJD)</h2>
     <div class="table-wrap">
       <table class="purchase-table">
         <thead><tr><th>Work section</th><th>Number of material lines</th><th>Subtotal (FJD)</th></tr></thead>
@@ -159,11 +159,11 @@ td,th{padding:10px;border-bottom:1px solid #e8edf2}tbody tr:hover{background:#f4
     <h2>Workbook summary</h2>
     <div class="table-wrap">
       <table class="purchase-table">
-        <thead><tr><th>Summary heading</th><th>Amount (FJD)</th></tr></thead>
+        <thead><tr><th>Summary heading</th><th>Corrected amount (FJD)</th><th>Original source amount (FJD)</th><th>MRD</th><th>WAF</th></tr></thead>
         <tbody id="purchaseReportedSummary"></tbody>
       </table>
     </div>
-    <div class="notice" style="margin-top:12px"><b>Quotation note:</b> <span id="purchaseQuotationNote"></span></div>
+    <div class="notice" style="margin-top:12px"><b>Quotation note:</b> <span id="purchaseQuotationNote"></span></div><div class="notice" style="margin-top:12px"><b>Source note:</b> <span id="purchaseSourceNote"></span></div>
   </section>
 </section>
 </main>
@@ -261,25 +261,25 @@ render();
 const purchaseItems = PURCHASING.sections.flatMap(section =>
   section.items.map(item => ({
     section: section.name,
-    material: item[0],
-    qty1: item[1],
-    unitCost: item[2],
-    supplier: item[3],
-    amount1: item[4],
-    qty4: item[5]
+    material: item.material,
+    qty: item.qty,
+    unitCost: item.unit_cost,
+    supplier: item.supplier,
+    amount: item.amount
   }))
 );
-const sourceGrandTotal = (PURCHASING.reported_summary.find(x => x.name === "Grand Total") || {}).amount;
+const sourceGrandTotal = PURCHASING.source_grand_total;
+const correctedGrandTotal = PURCHASING.corrected_grand_total;
 const detailSubtotalTotal = PURCHASING.sections.reduce((sum, x) => sum + (Number(x.subtotal) || 0), 0);
+const currencyLabel = PURCHASING.currency || "FJD";
 const numberText = value => value === null || value === undefined || value === "" ? "Not stated" :
   (typeof value === "number" ? value.toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:2}) : String(value));
-const currencyLabel = PURCHASING.currency || "FJD";
 const amountText = value => value === null || value === undefined || value === "" ? "Not stated" :
   currencyLabel + " " + Number(value).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
 const purchaseEsc = value => String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const purchaseSupplier = item => item.supplier || "Not listed in source";
 const purchaseFollowup = item => {
-  if (item.unitCost === null || item.amount1 === null) return ["Price/amount not stated","warn","price-gap"];
+  if (item.unitCost === null || item.amount === null) return ["Price/amount not stated","warn","price-gap"];
   if (!item.supplier) return ["Supplier not listed","muted","supplier-gap"];
   return ["Supplier listed","","listed"];
 };
@@ -287,7 +287,7 @@ $("pKpiItems").textContent = purchaseItems.length;
 $("pKpiSections").textContent = PURCHASING.sections.length;
 $("pKpiSuppliers").textContent = new Set(purchaseItems.map(x=>x.supplier).filter(Boolean)).size;
 $("pKpiSupplierGaps").textContent = purchaseItems.filter(x=>!x.supplier).length;
-$("pKpiTotal").textContent = amountText(sourceGrandTotal);
+$("pKpiTotal").textContent = amountText(correctedGrandTotal);
 PURCHASING.sections.forEach(section => {
   const opt=document.createElement("option");opt.value=section.name;opt.textContent=section.name;$("purchaseSection").appendChild(opt);
 });
@@ -296,14 +296,16 @@ PURCHASING.sections.forEach(section => {
 });
 const pumpSection = PURCHASING.sections.find(x=>x.name==="PUMPING LINE");
 const pumpReported = PURCHASING.reported_summary.find(x=>x.name==="Pumping Line");
-const diff = Number(pumpReported?.amount || 0) - Number(pumpSection?.subtotal || 0);
-$("purchaseCostWarning").innerHTML = "<b>Cost reconciliation required:</b> the detailed PUMPING LINE item subtotal is " +
-  amountText(pumpSection?.subtotal) + ", while the workbook summary lists Pumping Line as " +
-  amountText(pumpReported?.amount) + ". The difference is " + amountText(diff) +
-  ". The workbook grand total is " + amountText(sourceGrandTotal) +
-  ". Please confirm the pumping-line figure before using this as a final procurement commitment. The BOREHOLE GAGE section subtotal is " +
-  amountText(PURCHASING.sections.find(x=>x.name==="BOREHOLE GAGE")?.subtotal) +
-  ", while the summary labels the matching amount as “Pump Shed”.";
+const pumpDiff = Number(pumpReported?.source_amount || 0) - Number(pumpSection?.subtotal || 0);
+const grandDiff = Number(sourceGrandTotal || 0) - Number(correctedGrandTotal || 0);
+$("purchaseCostWarning").innerHTML =
+  "<b>Reconciled costing:</b> the detailed PUMPING LINE subtotal is " + amountText(pumpSection?.subtotal) +
+  ". The source summary had repeated " + amountText(pumpReported?.source_amount) + " for this line. " +
+  "The corrected Pumping Line amount is " + amountText(pumpSection?.subtotal) +
+  " (difference " + amountText(pumpDiff) + "). The corrected materials grand total is " +
+  amountText(correctedGrandTotal) + ", compared with the original source total of " +
+  amountText(sourceGrandTotal) + " (reduction " + amountText(grandDiff) + "). " +
+  "All seven detailed section subtotals reconcile with their material-line amounts.";
 function filteredPurchaseItems(){
   const q=$("purchaseSearch").value.toLowerCase().trim();
   const section=$("purchaseSection").value;
@@ -311,7 +313,7 @@ function filteredPurchaseItems(){
   const status=$("purchaseStatus").value;
   return purchaseItems.filter(item=>{
     const matchesQ=!q||[item.section,item.material,item.supplier||""].join(" ").toLowerCase().includes(q);
-    const matchesStatus=!status||(status==="supplier-gap"&&!item.supplier)||(status==="price-gap"&&(item.unitCost===null||item.amount1===null));
+    const matchesStatus=!status||(status==="supplier-gap"&&!item.supplier)||(status==="price-gap"&&(item.unitCost===null||item.amount===null));
     return matchesQ&&(!section||item.section===section)&&(!supplier||item.supplier===supplier)&&matchesStatus;
   });
 }
@@ -321,17 +323,18 @@ function renderPurchasing(){
   $("purchaseRows").innerHTML=rows.map(item=>{
     const f=purchaseFollowup(item);
     return "<tr><td>"+purchaseEsc(item.section)+"</td><td>"+purchaseEsc(item.material)+"</td><td>"+
-      purchaseEsc(numberText(item.qty1))+"</td><td>"+purchaseEsc(numberText(item.qty4))+"</td><td>"+
+      purchaseEsc(numberText(item.qty))+"</td><td>"+
       purchaseEsc(amountText(item.unitCost))+"</td><td>"+purchaseEsc(purchaseSupplier(item))+"</td><td>"+
-      purchaseEsc(amountText(item.amount1))+"</td><td><span class=\"status-pill "+f[1]+"\">"+f[0]+"</span></td></tr>";
-  }).join("")||"<tr><td colspan=\"8\">No matching materials found.</td></tr>";
+      purchaseEsc(amountText(item.amount))+"</td><td><span class=\"status-pill "+f[1]+"\">"+f[0]+"</span></td></tr>";
+  }).join("")||"<tr><td colspan=\"7\">No matching materials found.</td></tr>";
   $("purchaseSectionTotals").innerHTML=PURCHASING.sections.map(section=>
     "<tr><td>"+purchaseEsc(section.name)+"</td><td>"+section.items.length+"</td><td>"+amountText(section.subtotal)+"</td></tr>"
   ).join("")+"<tr><td><b>Sum of detail section subtotals</b></td><td>"+purchaseItems.length+"</td><td><b>"+amountText(detailSubtotalTotal)+"</b></td></tr>";
   $("purchaseReportedSummary").innerHTML=PURCHASING.reported_summary.map(row=>
-    "<tr><td>"+purchaseEsc(row.name)+"</td><td>"+amountText(row.amount)+"</td></tr>"
+    "<tr><td>"+purchaseEsc(row.name)+"</td><td>"+amountText(row.amount)+"</td><td>"+amountText(row.source_amount)+"</td><td>"+purchaseEsc(row.mrd||"—")+"</td><td>"+purchaseEsc(row.waf||"—")+"</td></tr>"
   ).join("");
   $("purchaseQuotationNote").textContent=PURCHASING.quotation_note;
+  $("purchaseSourceNote").textContent=PURCHASING.source_note;
 }
 ["purchaseSearch","purchaseSection","purchaseSupplier","purchaseStatus"].forEach(id=>
   $(id).addEventListener(id==="purchaseSearch"?"input":"change",renderPurchasing)
@@ -342,11 +345,11 @@ $("purchaseReset").addEventListener("click",()=>{
 });
 $("purchaseExport").addEventListener("click",()=>{
   const rows=filteredPurchaseItems();
-  const matrix=[["Work section","Material","Qty 1 site","Qty 4 sites","Unit cost","Supplier","Amount 1 site","Follow-up"],
-    ...rows.map(item=>[item.section,item.material,item.qty1??"",item.qty4??"",item.unitCost??"",item.supplier||"",item.amount1??"",purchaseFollowup(item)[0]])];
+  const matrix=[["Work section","Material","Quantity (1 site)","Unit cost (FJD)","Supplier","Amount (FJD)","Follow-up"],
+    ...rows.map(item=>[item.section,item.material,item.qty??"",item.unitCost??"",item.supplier||"",item.amount??"",purchaseFollowup(item)[0]])];
   const csv=matrix.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
   const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});
-  const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="MRD_Standpipe_Materials_Filtered.csv";a.click();URL.revokeObjectURL(url);
+  const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="MRD_Standpipe_Materials_One_Site_FJD.csv";a.click();URL.revokeObjectURL(url);
 });
 function switchDashboardTab(tab){
   const isPurchase=tab==="purchasing";
