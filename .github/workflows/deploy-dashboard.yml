@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'data/boreholes.csv'
+      - 'data/purchasing_materials.json'
       - 'dashboard_template.html'
       - 'generate_dashboard.py'
       - 'validate_data.py'

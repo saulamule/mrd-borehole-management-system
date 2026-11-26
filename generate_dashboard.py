@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parent
 CSV_FILE = ROOT / "data" / "boreholes.csv"
 TEMPLATE = ROOT / "dashboard_template.html"
 OUTPUT = ROOT / "docs" / "index.html"
+PURCHASING_JSON = ROOT / "data" / "purchasing_materials.json"
 
 def text(v):
     return (v or "").strip()
@@ -69,10 +70,15 @@ def main():
 
     template = TEMPLATE.read_text(encoding="utf-8")
     payload = json.dumps(records, ensure_ascii=False).replace("</", "<\\/")
+    if not PURCHASING_JSON.exists():
+        raise SystemExit(f"Missing purchasing list: {PURCHASING_JSON}")
+    purchasing = json.loads(PURCHASING_JSON.read_text(encoding="utf-8"))
+    purchasing_payload = json.dumps(purchasing, ensure_ascii=False).replace("</", "<\\/")
     built = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     html = (template.replace("__DATA_JSON__", payload)
                     .replace("__TOTAL__", str(len(records)))
                     .replace("__MAPPED__", str(sum(r["mapped"] for r in records)))
+                    .replace("__PURCHASING_DATA_JSON__", purchasing_payload)
                     .replace("__BUILT_AT__", built))
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text(html, encoding="utf-8")

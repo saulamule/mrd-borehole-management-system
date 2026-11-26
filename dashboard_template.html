@@ -34,6 +34,29 @@ td,th{padding:10px;border-bottom:1px solid #e8edf2}tbody tr:hover{background:#f4
 .small{font-size:11px;color:var(--muted)}footer{text-align:center;color:var(--muted);font-size:11px;padding:22px}
 @media(max-width:1000px){.kpis{grid-template-columns:repeat(3,1fr)}.layout{grid-template-columns:1fr}}
 @media(max-width:600px){.kpis{grid-template-columns:repeat(2,1fr)}.charts{grid-template-columns:1fr}#map{height:440px}.kpi .value{font-size:24px}}
+
+.app-tabs{display:flex;gap:8px;align-items:center;margin:0 0 18px;padding:8px;background:#e8eef3;border-radius:10px}
+.app-tab{background:transparent;color:#29465e;border:1px solid transparent;height:42px;padding:0 22px}
+.app-tab.active{background:#12304a;color:#fff;box-shadow:0 2px 6px #12304a22}
+.tab-panel[hidden]{display:none!important}
+.purchase-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin:4px 0 16px}
+.purchase-heading h2{font-size:22px;color:#12304a;margin:0 0 5px}
+.purchase-heading p{font-size:12px;color:#64748b;margin:0}
+.purchase-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.purchase-notice,.purchase-warning{padding:13px 15px;border-radius:8px;font-size:12px;line-height:1.55;margin:12px 0}
+.purchase-notice{background:#eef6fb;border-left:4px solid #176b87;color:#29465e}
+.purchase-warning{background:#fff4e5;border-left:4px solid #d69a2d;color:#694b12}
+.purchase-filters{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+.purchase-filters .field{min-width:155px}
+.purchase-table-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.purchase-table-heading h2{margin:0}
+.purchase-table td:nth-child(2){white-space:normal;min-width:230px;max-width:360px}
+.purchase-table td:nth-child(8){white-space:normal;min-width:125px}
+.status-pill{display:inline-block;padding:3px 8px;border-radius:20px;background:#edf3f7;color:#38536b;font-size:11px;white-space:nowrap}
+.status-pill.warn{background:#fff1d6;color:#8a5a00}
+.status-pill.muted{background:#f1f3f5;color:#596579}
+@media(max-width:1100px){.purchase-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:650px){.purchase-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.purchase-heading{display:block}.purchase-filters .field{min-width:100%}.app-tab{flex:1;padding:0 10px}}
 </style>
 </head>
 <body>
@@ -41,6 +64,11 @@ td,th{padding:10px;border-bottom:1px solid #e8edf2}tbody tr:hover{background:#f4
 <h1>MRD Borehole Management System</h1>
 <div class="sub">Operational borehole register · GIS distribution · implementation status</div><div id="buildStamp" style="font-size:11px;opacity:.75;margin-top:7px"></div></header>
 <main>
+<nav class="app-tabs" aria-label="Dashboard sections">
+  <button type="button" class="app-tab active" data-tab="overview">Overview</button>
+  <button type="button" class="app-tab" data-tab="purchasing">Purchasing</button>
+</nav>
+<div id="overviewPanel" class="tab-panel">
 <section class="kpis">
  <div class="card kpi"><div class="label">Register records</div><div class="value" id="kTotal">—</div><div class="hint">All spreadsheet entries</div></div>
  <div class="card kpi"><div class="label">Mapped locations</div><div class="value" id="kMapped">—</div><div class="hint">Valid Fiji coordinates</div></div>
@@ -77,6 +105,67 @@ td,th{padding:10px;border-bottom:1px solid #e8edf2}tbody tr:hover{background:#f4
  </div>
 </div>
 <div class="notice"><b>Administrator update:</b> The official editable register is <code>data/boreholes.csv</code> in the GitHub repository. Update the CSV and commit it to the <code>main</code> branch; GitHub Actions validates the register and republishes this dashboard. This website is read-only and contains no administrator password or GitHub token.<br><br><b>Data quality and use:</b> Coordinates are plotted only when they fall within Fiji's broad geographic bounds. The script removes harmless internal spaces and degree symbols from numeric coordinate cells, but does not swap or guess coordinates. Records excluded from the map should be checked against the original field/GIS records. Confirm MRD approval before publishing this infrastructure register publicly.</div>
+
+</div>
+<section id="purchasingPanel" class="tab-panel" hidden>
+  <div class="purchase-heading">
+    <div>
+      <h2>Purchasing & Materials Register</h2>
+      <p>One standpipe material list · source workbook: Draft ONE STAND PIPE MATERIAL LIST (1).xlsx</p>
+    </div>
+  </div>
+  <section class="purchase-kpis">
+    <div class="card kpi"><div class="label">Material lines</div><div class="value" id="pKpiItems">—</div><div class="hint">Across all work sections</div></div>
+    <div class="card kpi"><div class="label">Work sections</div><div class="value" id="pKpiSections">—</div><div class="hint">As grouped in the workbook</div></div>
+    <div class="card kpi"><div class="label">Suppliers listed</div><div class="value" id="pKpiSuppliers">—</div><div class="hint">Distinct supplier names</div></div>
+    <div class="card kpi"><div class="label">Supplier follow-up</div><div class="value" id="pKpiSupplierGaps">—</div><div class="hint">Material lines without a supplier</div></div>
+    <div class="card kpi"><div class="label">Source grand total</div><div class="value" id="pKpiTotal">—</div><div class="hint">Amount as stated in the workbook</div></div>
+  </section>
+  <div class="purchase-notice">
+    <b>Procurement data note:</b> The workbook does not state a currency. Figures are therefore shown as source amounts without adding a currency label.
+    Quantities for one site and four sites are displayed exactly as entered; blank quantities, unit costs, suppliers or amounts have not been estimated.
+  </div>
+  <div class="purchase-warning" id="purchaseCostWarning"></div>
+  <section class="panel purchase-filters">
+    <div class="field"><label for="purchaseSearch">Search materials</label><input id="purchaseSearch" placeholder="Material, supplier or section"></div>
+    <div class="field"><label for="purchaseSection">Work section</label><select id="purchaseSection"><option value="">All sections</option></select></div>
+    <div class="field"><label for="purchaseSupplier">Supplier</label><select id="purchaseSupplier"><option value="">All suppliers</option></select></div>
+    <div class="field"><label for="purchaseStatus">Procurement information</label><select id="purchaseStatus"><option value="">All records</option><option value="supplier-gap">Supplier not listed</option><option value="price-gap">Price/amount not listed</option></select></div>
+    <button type="button" id="purchaseReset">Reset filters</button>
+    <button type="button" id="purchaseExport">Download filtered CSV</button>
+  </section>
+  <section class="panel">
+    <div class="purchase-table-heading">
+      <h2>Material list</h2>
+      <div class="small" id="purchaseTableCount"></div>
+    </div>
+    <div class="table-wrap">
+      <table class="purchase-table">
+        <thead><tr><th>Work section</th><th>Material description</th><th>Qty<br>1 site</th><th>Qty<br>4 sites</th><th>Unit cost</th><th>Supplier</th><th>Amount<br>1 site</th><th>Follow-up</th></tr></thead>
+        <tbody id="purchaseRows"></tbody>
+      </table>
+    </div>
+  </section>
+  <section class="panel">
+    <h2>Section subtotals from the material list</h2>
+    <div class="table-wrap">
+      <table class="purchase-table">
+        <thead><tr><th>Work section</th><th>Number of material lines</th><th>Subtotal (source workbook)</th></tr></thead>
+        <tbody id="purchaseSectionTotals"></tbody>
+      </table>
+    </div>
+  </section>
+  <section class="panel">
+    <h2>Workbook summary</h2>
+    <div class="table-wrap">
+      <table class="purchase-table">
+        <thead><tr><th>Summary heading</th><th>Amount (source workbook)</th></tr></thead>
+        <tbody id="purchaseReportedSummary"></tbody>
+      </table>
+    </div>
+    <div class="notice" style="margin-top:12px"><b>Quotation note:</b> <span id="purchaseQuotationNote"></span></div>
+  </section>
+</section>
 </main>
 <footer>Mineral Resources Department · Generated from the supplied workbook · Verify source records before operational or field use</footer>
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -84,6 +173,7 @@ td,th{padding:10px;border-bottom:1px solid #e8edf2}tbody tr:hover{background:#f4
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
 const DATA = __DATA_JSON__;
+const PURCHASING = __PURCHASING_DATA_JSON__;
 document.getElementById("buildStamp").textContent = "Dashboard build: __BUILT_AT__ · Source: data/boreholes.csv";
 const colours={Central:"#2675b9",Western:"#22966f",Northern:"#d88a20",Eastern:"#8657ad",Unspecified:"#718096"};
 const $=id=>document.getElementById(id);
@@ -167,5 +257,107 @@ function render(){
 ["search","division","province","tikina","tikinaStatus","pump","retic"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",render));
 $("reset").addEventListener("click",()=>{["search","division","province","tikina","tikinaStatus","pump","retic"].forEach(id=>$(id).value="");render()});
 render();
+
+const purchaseItems = PURCHASING.sections.flatMap(section =>
+  section.items.map(item => ({
+    section: section.name,
+    material: item[0],
+    qty1: item[1],
+    unitCost: item[2],
+    supplier: item[3],
+    amount1: item[4],
+    qty4: item[5]
+  }))
+);
+const sourceGrandTotal = (PURCHASING.reported_summary.find(x => x.name === "Grand Total") || {}).amount;
+const detailSubtotalTotal = PURCHASING.sections.reduce((sum, x) => sum + (Number(x.subtotal) || 0), 0);
+const numberText = value => value === null || value === undefined || value === "" ? "Not stated" :
+  (typeof value === "number" ? value.toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:2}) : String(value));
+const amountText = value => value === null || value === undefined || value === "" ? "Not stated" :
+  Number(value).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const purchaseEsc = value => String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const purchaseSupplier = item => item.supplier || "Not listed in source";
+const purchaseFollowup = item => {
+  if (item.unitCost === null || item.amount1 === null) return ["Price/amount not stated","warn","price-gap"];
+  if (!item.supplier) return ["Supplier not listed","muted","supplier-gap"];
+  return ["Supplier listed","","listed"];
+};
+$("pKpiItems").textContent = purchaseItems.length;
+$("pKpiSections").textContent = PURCHASING.sections.length;
+$("pKpiSuppliers").textContent = new Set(purchaseItems.map(x=>x.supplier).filter(Boolean)).size;
+$("pKpiSupplierGaps").textContent = purchaseItems.filter(x=>!x.supplier).length;
+$("pKpiTotal").textContent = amountText(sourceGrandTotal);
+PURCHASING.sections.forEach(section => {
+  const opt=document.createElement("option");opt.value=section.name;opt.textContent=section.name;$("purchaseSection").appendChild(opt);
+});
+[...new Set(purchaseItems.map(x=>x.supplier).filter(Boolean))].sort().forEach(supplier=>{
+  const opt=document.createElement("option");opt.value=supplier;opt.textContent=supplier;$("purchaseSupplier").appendChild(opt);
+});
+const pumpSection = PURCHASING.sections.find(x=>x.name==="PUMPING LINE");
+const pumpReported = PURCHASING.reported_summary.find(x=>x.name==="Pumping Line");
+const diff = Number(pumpReported?.amount || 0) - Number(pumpSection?.subtotal || 0);
+$("purchaseCostWarning").innerHTML = "<b>Cost reconciliation required:</b> the detailed PUMPING LINE item subtotal is " +
+  amountText(pumpSection?.subtotal) + ", while the workbook summary lists Pumping Line as " +
+  amountText(pumpReported?.amount) + ". The difference is " + amountText(diff) +
+  ". The workbook grand total is " + amountText(sourceGrandTotal) +
+  ". Please confirm the pumping-line figure before using this as a final procurement commitment. The BOREHOLE GAGE section subtotal is " +
+  amountText(PURCHASING.sections.find(x=>x.name==="BOREHOLE GAGE")?.subtotal) +
+  ", while the summary labels the matching amount as “Pump Shed”.";
+function filteredPurchaseItems(){
+  const q=$("purchaseSearch").value.toLowerCase().trim();
+  const section=$("purchaseSection").value;
+  const supplier=$("purchaseSupplier").value;
+  const status=$("purchaseStatus").value;
+  return purchaseItems.filter(item=>{
+    const matchesQ=!q||[item.section,item.material,item.supplier||""].join(" ").toLowerCase().includes(q);
+    const matchesStatus=!status||(status==="supplier-gap"&&!item.supplier)||(status==="price-gap"&&(item.unitCost===null||item.amount1===null));
+    return matchesQ&&(!section||item.section===section)&&(!supplier||item.supplier===supplier)&&matchesStatus;
+  });
+}
+function renderPurchasing(){
+  const rows=filteredPurchaseItems();
+  $("purchaseTableCount").textContent="Showing "+rows.length+" of "+purchaseItems.length+" material lines";
+  $("purchaseRows").innerHTML=rows.map(item=>{
+    const f=purchaseFollowup(item);
+    return "<tr><td>"+purchaseEsc(item.section)+"</td><td>"+purchaseEsc(item.material)+"</td><td>"+
+      purchaseEsc(numberText(item.qty1))+"</td><td>"+purchaseEsc(numberText(item.qty4))+"</td><td>"+
+      purchaseEsc(amountText(item.unitCost))+"</td><td>"+purchaseEsc(purchaseSupplier(item))+"</td><td>"+
+      purchaseEsc(amountText(item.amount1))+"</td><td><span class=\\"status-pill "+f[1]+"\\">"+f[0]+"</span></td></tr>";
+  }).join("")||"<tr><td colspan=\\"8\\">No matching materials found.</td></tr>";
+  $("purchaseSectionTotals").innerHTML=PURCHASING.sections.map(section=>
+    "<tr><td>"+purchaseEsc(section.name)+"</td><td>"+section.items.length+"</td><td>"+amountText(section.subtotal)+"</td></tr>"
+  ).join("")+"<tr><td><b>Sum of detail section subtotals</b></td><td>"+purchaseItems.length+"</td><td><b>"+amountText(detailSubtotalTotal)+"</b></td></tr>";
+  $("purchaseReportedSummary").innerHTML=PURCHASING.reported_summary.map(row=>
+    "<tr><td>"+purchaseEsc(row.name)+"</td><td>"+amountText(row.amount)+"</td></tr>"
+  ).join("");
+  $("purchaseQuotationNote").textContent=PURCHASING.quotation_note;
+}
+["purchaseSearch","purchaseSection","purchaseSupplier","purchaseStatus"].forEach(id=>
+  $(id).addEventListener(id==="purchaseSearch"?"input":"change",renderPurchasing)
+);
+$("purchaseReset").addEventListener("click",()=>{
+  ["purchaseSearch","purchaseSection","purchaseSupplier","purchaseStatus"].forEach(id=>$(id).value="");
+  renderPurchasing();
+});
+$("purchaseExport").addEventListener("click",()=>{
+  const rows=filteredPurchaseItems();
+  const matrix=[["Work section","Material","Qty 1 site","Qty 4 sites","Unit cost","Supplier","Amount 1 site","Follow-up"],
+    ...rows.map(item=>[item.section,item.material,item.qty1??"",item.qty4??"",item.unitCost??"",item.supplier||"",item.amount1??"",purchaseFollowup(item)[0]])];
+  const csv=matrix.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
+  const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="MRD_Standpipe_Materials_Filtered.csv";a.click();URL.revokeObjectURL(url);
+});
+function switchDashboardTab(tab){
+  const isPurchase=tab==="purchasing";
+  $("overviewPanel").hidden=isPurchase;
+  $("purchasingPanel").hidden=!isPurchase;
+  document.querySelectorAll(".app-tab").forEach(button=>button.classList.toggle("active",button.dataset.tab===tab));
+  if(isPurchase) renderPurchasing();
+  else setTimeout(()=>map.invalidateSize(),80);
+  window.scrollTo({top:0,behavior:"auto"});
+}
+document.querySelectorAll(".app-tab").forEach(button=>button.addEventListener("click",()=>switchDashboardTab(button.dataset.tab)));
+if(window.location.hash==="#purchasing") switchDashboardTab("purchasing");
+
 </script>
 </body></html>
