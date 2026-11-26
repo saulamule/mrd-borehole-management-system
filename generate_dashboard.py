@@ -85,6 +85,16 @@ def main():
                     .replace("__RESOURCES_DATA_JSON__", resources_payload)
                     .replace("__BUILT_AT__", built))
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+    GIS_SOURCE = ROOT / "gis_layers"
+    GIS_OUTPUT = OUTPUT.parent / "gis_layers"
+    required_gis = ["community_water_status.geojson", "tikina_water_status.geojson"]
+    missing_gis = [name for name in required_gis if not (GIS_SOURCE / name).exists()]
+    if missing_gis:
+        raise SystemExit("Missing GIS overlay file(s): " + ", ".join(missing_gis))
+    import shutil
+    GIS_OUTPUT.mkdir(parents=True, exist_ok=True)
+    for name in required_gis:
+        shutil.copy2(GIS_SOURCE / name, GIS_OUTPUT / name)
     OUTPUT.write_text(html, encoding="utf-8")
     print(f"Dashboard generated: {OUTPUT}")
     print(f"Register records: {len(records)}")
