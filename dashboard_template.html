@@ -67,6 +67,7 @@ td,th{padding:10px;border-bottom:1px solid #e8edf2}tbody tr:hover{background:#f4
 <nav class="app-tabs" aria-label="Dashboard sections">
   <button type="button" class="app-tab active" data-tab="overview">Overview</button>
   <button type="button" class="app-tab" data-tab="purchasing">Purchasing</button>
+  <button type="button" class="app-tab" data-tab="resources">Resources</button>
 </nav>
 <div id="overviewPanel" class="tab-panel">
 <section class="kpis">
@@ -166,15 +167,33 @@ td,th{padding:10px;border-bottom:1px solid #e8edf2}tbody tr:hover{background:#f4
     <div class="notice" style="margin-top:12px"><b>Quotation note:</b> <span id="purchaseQuotationNote"></span></div><div class="notice" style="margin-top:12px"><b>Source note:</b> <span id="purchaseSourceNote"></span></div>
   </section>
 </section>
+<section id="resourcesPanel" class="tab-panel" hidden>
+  <div class="purchase-heading">
+    <div>
+      <h2>Resources Required & Operational Planning</h2>
+      <p>Live source: Copy of Resources Required Consolidated · Google Drive</p>
+    </div>
+  </div>
+  <section class="purchase-kpis">
+    <div class="card kpi"><div class="label">Worksheets</div><div class="value" id="rKpiSheets">—</div><div class="hint">Connected resource schedules</div></div>
+    <div class="card kpi"><div class="label">Data rows</div><div class="value" id="rKpiRows">—</div><div class="hint">Non-empty source rows</div></div>
+    <div class="card kpi"><div class="label">Last synchronised</div><div class="value" id="rKpiUpdated" style="font-size:16px">—</div><div class="hint">Google Drive source</div></div>
+  </section>
+  <div class="purchase-notice">
+    <b>Live data source:</b> These tables are read from the MRD Google Drive Resources Required spreadsheet. Update the source spreadsheet; the dashboard synchronisation workflow refreshes the displayed figures. Blank source cells are preserved as blank.
+  </div>
+  <div id="resourcesTables"></div>
+</section>
 </main>
-<footer>Mineral Resources Department · Generated from the supplied workbook · Verify source records before operational or field use</footer>
+<footer>Mineral Resources Department · Generated from approved Google Drive sources · Verify source records before operational or field use</footer>
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
 const DATA = __DATA_JSON__;
 const PURCHASING = __PURCHASING_DATA_JSON__;
-document.getElementById("buildStamp").textContent = "Dashboard build: __BUILT_AT__ · Source: data/boreholes.csv";
+const RESOURCES = __RESOURCES_DATA_JSON__;
+document.getElementById("buildStamp").textContent = "Dashboard build: __BUILT_AT__ · Google Drive data sync: " + (RESOURCES.synced_at || "not yet connected");
 const colours={Central:"#2675b9",Western:"#22966f",Northern:"#d88a20",Eastern:"#8657ad",Unspecified:"#718096"};
 const $=id=>document.getElementById(id);
 const fmt=v=>v===null||v===undefined||v===""?"Not recorded":v;
@@ -298,14 +317,18 @@ const pumpSection = PURCHASING.sections.find(x=>x.name==="PUMPING LINE");
 const pumpReported = PURCHASING.reported_summary.find(x=>x.name==="Pumping Line");
 const pumpDiff = Number(pumpReported?.source_amount || 0) - Number(pumpSection?.subtotal || 0);
 const grandDiff = Number(sourceGrandTotal || 0) - Number(correctedGrandTotal || 0);
-$("purchaseCostWarning").innerHTML =
-  "<b>Reconciled costing:</b> the detailed PUMPING LINE subtotal is " + amountText(pumpSection?.subtotal) +
-  ". The source summary had repeated " + amountText(pumpReported?.source_amount) + " for this line. " +
-  "The corrected Pumping Line amount is " + amountText(pumpSection?.subtotal) +
-  " (difference " + amountText(pumpDiff) + "). The corrected materials grand total is " +
-  amountText(correctedGrandTotal) + ", compared with the original source total of " +
-  amountText(sourceGrandTotal) + " (reduction " + amountText(grandDiff) + "). " +
-  "All seven detailed section subtotals reconcile with their material-line amounts.";
+if (Math.abs(pumpDiff) > 0.005 || Math.abs(grandDiff) > 0.005) {
+  $("purchaseCostWarning").innerHTML =
+    "<b>Cost reconciliation:</b> the detailed PUMPING LINE subtotal is " + amountText(pumpSection?.subtotal) +
+    "; the source summary amount is " + amountText(pumpReported?.source_amount) +
+    ". The materials total calculated from the detailed sections is " + amountText(correctedGrandTotal) +
+    "; the imported source summary total is " + amountText(sourceGrandTotal) + ". Please review the source workbook summary.";
+} else {
+  $("purchaseCostWarning").innerHTML =
+    "<b>Live costing check:</b> the PUMPING LINE subtotal is " + amountText(pumpSection?.subtotal) +
+    ". The materials grand total calculated from the seven detailed sections is " + amountText(correctedGrandTotal) +
+    ". No difference is recorded between the imported section totals and the dashboard calculation.";
+}
 function filteredPurchaseItems(){
   const q=$("purchaseSearch").value.toLowerCase().trim();
   const section=$("purchaseSection").value;
@@ -351,17 +374,37 @@ $("purchaseExport").addEventListener("click",()=>{
   const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});
   const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="MRD_Standpipe_Materials_One_Site_FJD.csv";a.click();URL.revokeObjectURL(url);
 });
+function renderResources(){
+  const sheets = Array.isArray(RESOURCES.sheets) ? RESOURCES.sheets : [];
+  const rowCount = sheets.reduce((sum, sheet) => sum + (Array.isArray(sheet.rows) ? sheet.rows.length : 0), 0);
+  $("rKpiSheets").textContent = sheets.length;
+  $("rKpiRows").textContent = rowCount;
+  $("rKpiUpdated").textContent = RESOURCES.synced_at || "Not synchronised";
+  $("resourcesTables").innerHTML = sheets.map(sheet => {
+    const headers = Array.isArray(sheet.headers) ? sheet.headers : [];
+    const rows = Array.isArray(sheet.rows) ? sheet.rows : [];
+    const width = Math.max(headers.length, ...rows.map(row => Array.isArray(row) ? row.length : 0), 0);
+    const labels = Array.from({length:width}, (_, i) => headers[i] || ("Column " + (i + 1)));
+    const head = "<thead><tr>" + labels.map(label => "<th>" + esc(label) + "</th>").join("") + "</tr></thead>";
+    const body = rows.map(row => "<tr>" + labels.map((_, i) => "<td>" + esc(row && row[i] != null ? row[i] : "") + "</td>").join("") + "</tr>").join("");
+    return "<section class=\"panel\"><h2>" + esc(sheet.title || "Resource worksheet") + "</h2><div class=\"small\" style=\"margin-bottom:9px\">" + rows.length + " source rows</div><div class=\"table-wrap\"><table>" + head + "<tbody>" + body + "</tbody></table></div></section>";
+  }).join("") || "<section class=\"panel\"><h2>No resource worksheets loaded</h2><div class=\"legend\">The Google Drive synchronisation has not supplied any resource data yet.</div></section>";
+}
 function switchDashboardTab(tab){
   const isPurchase=tab==="purchasing";
-  $("overviewPanel").hidden=isPurchase;
+  const isResources=tab==="resources";
+  $("overviewPanel").hidden=isPurchase || isResources;
   $("purchasingPanel").hidden=!isPurchase;
+  $("resourcesPanel").hidden=!isResources;
   document.querySelectorAll(".app-tab").forEach(button=>button.classList.toggle("active",button.dataset.tab===tab));
   if(isPurchase) renderPurchasing();
+  else if(isResources) renderResources();
   else setTimeout(()=>map.invalidateSize(),80);
   window.scrollTo({top:0,behavior:"auto"});
 }
 document.querySelectorAll(".app-tab").forEach(button=>button.addEventListener("click",()=>switchDashboardTab(button.dataset.tab)));
 if(window.location.hash==="#purchasing") switchDashboardTab("purchasing");
+if(window.location.hash==="#resources") switchDashboardTab("resources");
 
 </script>
 </body></html>

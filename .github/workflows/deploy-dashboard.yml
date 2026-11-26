@@ -36,12 +36,13 @@ jobs:
       - name: Generate dashboard
         run: python generate_dashboard.py
       - name: Upload Pages artifact
+        if: vars.MRD_DASHBOARD_PUBLIC_RELEASE_APPROVED == 'true'
         uses: actions/upload-pages-artifact@v3
         with:
           path: docs
 
   deploy:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && vars.MRD_DASHBOARD_PUBLIC_RELEASE_APPROVED == 'true'
     needs: build
     runs-on: ubuntu-latest
     permissions:

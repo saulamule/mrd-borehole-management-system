@@ -1,6 +1,6 @@
 # MRD Borehole Management System — Stage 2
 
-**Repository:** Private GitHub repository  
+**Repository:** Public GitHub repository (website and repository content are publicly accessible)  
 **Administration:** One designated administrator  
 **Master register:** `data/boreholes.csv`
 
@@ -13,7 +13,9 @@ This project provides a single-administrator workflow for maintaining the MRD un
 - `validate_data.py` — checks required fields, duplicate IDs and coordinate quality.
 - `docs/index.html` — current generated dashboard preview.
 - `ADMIN_GUIDE.md` — register update and administration instructions.
-- `.github/workflows/deploy-dashboard.yml` — currently runs validation and build checks only.
+- `.github/workflows/deploy-dashboard.yml` — validates and builds repository data; Pages publishing is approval-gated.
+- `.github/workflows/google-drive-sync.yml` — scheduled read-only Google Drive synchronisation and approval-gated Pages deployment.
+- `scripts/sync_google_sources.py` — imports the three selected sources into the temporary runner workspace.
 
 ## Current deployment status
 The repository is private. **Public website deployment is intentionally not enabled yet** because the register includes borehole locations and coordinates. GitHub Pages sites are publicly available by default even when their source repository is private. Private Pages access control requires GitHub Enterprise Cloud. Confirm MRD data-release approval and the intended website visibility before enabling deployment.
