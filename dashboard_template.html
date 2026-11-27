@@ -203,7 +203,9 @@ fillSelect("division",unique("division"));fillSelect("province",unique("province
 fillSelect("tikina",unique("tikina"));fillSelect("tikinaStatus",unique("tikina_water_status"));
 fillSelect("pump",unique("pump_test"));fillSelect("retic",unique("reticulation"));
 
-const map=L.map("map",{scrollWheelZoom:true}).setView([-17.8,178.2],6);
+// Keep the map framed on Fiji, including Rotuma and the eastern Lau group.
+const FIJI_BOUNDS = L.latLngBounds([[-21.5,176.0],[-11.5,183.0]]);
+const map=L.map("map",{scrollWheelZoom:true}).fitBounds(FIJI_BOUNDS,{padding:[18,18]});
 
 // Multiple selectable basemaps. If one provider is blocked or unavailable,
 // users can switch providers from the layer control.
@@ -330,7 +332,7 @@ function render(){
  $("tableCount").textContent=`Showing ${rows.length} of ${DATA.length} register records · ${mapped.length} with mappable coordinates`;
  $("rows").innerHTML=rows.map(d=>`<tr><td>${esc(fmt(d.borehole))}</td><td>${esc(d.location)}</td><td>${esc(d.division)}</td><td>${esc(d.province)}</td><td>${esc(fmt(d.tikina))}</td><td>${esc(fmt(d.tikina_water_status))}</td><td>${d.tikina_critical_share===null?"Not recorded":(d.tikina_critical_share*100).toFixed(1)+"%"}</td><td>${esc(fmt(d.depth))}</td><td>${esc(fmt(d.discharge))}</td><td><span class="pill">${esc(d.pump_test)}</span></td><td><span class="pill">${esc(d.reticulation)}</span></td></tr>`).join("");
  clusters.clearLayers();mapped.forEach(d=>clusters.addLayer(markers.get(d)));
- if(mapped.length){let b=L.latLngBounds(mapped.map(d=>[d.latitude,d.longitude]));map.fitBounds(b.pad(.12),{maxZoom:8})}
+ // Keep the geographic extent fixed on Fiji; filters change markers, not map extent.
  const dc=counts(rows,"division");makeChart("divisionChart","bar",Object.keys(dc),Object.values(dc));
  const pc=counts(rows,"pump_test");makeChart("pumpChart","doughnut",Object.keys(pc),Object.values(pc));
  const rc=counts(rows,"reticulation");makeChart("reticChart","doughnut",Object.keys(rc),Object.values(rc));
